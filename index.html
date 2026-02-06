@@ -142,67 +142,7 @@ seca.addEventListener("change", () => {
 disnea.addEventListener("change", () => {
   bloqueDisnea.style.display = disnea.checked ? "block" : "none";
 });
-
-  <script>
-function generarResumen() {
-  let r = "";
-
-  const nombre = document.getElementById("nombre")?.value || "No consignado";
-  const edad = document.getElementById("edad")?.value || "?";
-  const sexo = document.getElementById("sexo")?.value || "No consignado";
-  const procedencia = document.getElementById("procedencia")?.value || "No consignada";
-  const ocupacion = document.getElementById("ocupacion")?.value || "No consignada";
-
-  r += `<strong>Paciente:</strong> ${nombre}<br>`;
-  r += `<strong>Edad:</strong> ${edad} años<br>`;
-  r += `<strong>Sexo:</strong> ${sexo}<br>`;
-  r += `<strong>Procedencia:</strong> ${procedencia}<br>`;
-  r += `<strong>Ocupación:</strong> ${ocupacion}<br><br>`;
-
-  r += `<strong>Motivo de consulta:</strong><br>`;
-
-  // TOS
-  const tos = document.getElementById("tos");
-  if (tos && tos.checked) {
-    const tipoTos = document.querySelector('input[name="tosTipo"]:checked');
-    r += `– Tos`;
-    if (tipoTos) r += ` (${tipoTos.value})`;
-    r += `<br>`;
-  }
-
-  // DISNEA
-  const disnea = document.getElementById("disnea");
-  if (disnea && disnea.checked) {
-    const tiposDisnea = [...document.querySelectorAll(".disneaTipo:checked")]
-      .map(e => e.value)
-      .join(", ");
-    r += `– Disnea`;
-    if (tiposDisnea) r += ` (${tiposDisnea})`;
-    r += `<br>`;
-  }
-
-  document.getElementById("textoResumen").innerHTML = r;
-  document.getElementById("resumenClinico").style.display = "block";
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const boton = document.getElementById("btnResumen");
-  boton.addEventListener("click", generarResumen);
-});
 </script>
 
-</script>
-
-<!-- BOTÓN RESUMEN -->
-<div class="bloque">
- <button id="btnResumen">🩺 Generar resumen clínico</button>
-</div>
-
-<!-- RESUMEN -->
-<div class="bloque" id="resumenClinico" style="display:none">
-  <h3>Resumen clínico</h3>
-  <div id="textoResumen"></div>
-</div>
- 
 </body>
 </html>
