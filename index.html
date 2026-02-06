@@ -88,7 +88,7 @@ h1 { color: #0b5ed7; }
     <strong>Tiempo de evolución</strong><br>
     <label><input type="radio" name="tiempoTos" value="aguda"> Aguda (&lt;3 semanas)</label><br>
     <label><input type="radio" name="tiempoTos" value="subaguda"> Subaguda (3–8 semanas)</label><br>
-    <label><input type="radio" name="tiempoTos" value="cronica"> Crónica (&gt;8 semanas)</label>
+    <label><input type="radio" name="tiempoTos" value="crónica"> Crónica (&gt;8 semanas)</label>
   </div>
 </div>
 
@@ -116,6 +116,7 @@ h1 { color: #0b5ed7; }
 </div>
 
 <script>
+// Referencias
 const tos = document.getElementById("tos");
 const disnea = document.getElementById("disnea");
 const bloqueTos = document.getElementById("bloqueTos");
@@ -123,6 +124,13 @@ const bloqueDisnea = document.getElementById("bloqueDisnea");
 const resumenDiv = document.getElementById("resumenClinico");
 const textoResumen = document.getElementById("textoResumen");
 
+const nombre = document.getElementById("nombre");
+const edad = document.getElementById("edad");
+const sexo = document.getElementById("sexo");
+const procedencia = document.getElementById("procedencia");
+const ocupacion = document.getElementById("ocupacion");
+
+// Mostrar / ocultar bloques
 tos.addEventListener("change", () => {
   bloqueTos.style.display = tos.checked ? "block" : "none";
 });
@@ -131,6 +139,7 @@ disnea.addEventListener("change", () => {
   bloqueDisnea.style.display = disnea.checked ? "block" : "none";
 });
 
+// Generar resumen
 function generarResumen() {
   let r = "";
 
@@ -156,7 +165,7 @@ function generarResumen() {
     const tipos = [...document.querySelectorAll(".disneaTipo:checked")]
       .map(e => e.value)
       .join(", ");
-    r += `– Disnea ${tipos || ""}<br>`;
+    r += `– Disnea ${tipos}<br>`;
   }
 
   textoResumen.innerHTML = r;
