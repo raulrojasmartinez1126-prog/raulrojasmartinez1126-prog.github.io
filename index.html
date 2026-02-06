@@ -5,26 +5,10 @@
 <title>Evaluación Clínica Respiratoria</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  padding: 20px;
-}
-
+body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; }
 h1 { color: #0b5ed7; }
-
-.bloque {
-  background: white;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-}
-
-.subbloque {
-  margin-left: 20px;
-  margin-top: 10px;
-}
-
+.bloque { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+.subbloque { margin-left: 20px; margin-top: 10px; }
 .alerta { color: red; font-weight: bold; }
 </style>
 </head>
@@ -33,20 +17,17 @@ h1 { color: #0b5ed7; }
 
 <h1>Evaluación Clínica Respiratoria</h1>
 
-  <!-- DATOS FILIATORIOS -->
+<!-- DATOS FILIATORIOS -->
 <div class="bloque">
   <h3>Datos filiatorios</h3>
-
   <div class="subbloque">
     <label>Nombre y apellido:</label><br>
     <input type="text" id="nombre" style="width:300px">
   </div>
-
   <div class="subbloque">
     <label>Edad:</label><br>
     <input type="number" id="edad" min="0" style="width:80px"> años
   </div>
-
   <div class="subbloque">
     <label>Sexo:</label><br>
     <select id="sexo">
@@ -55,12 +36,10 @@ h1 { color: #0b5ed7; }
       <option value="femenino">Femenino</option>
     </select>
   </div>
-
   <div class="subbloque">
     <label>Lugar de procedencia:</label><br>
     <input type="text" id="procedencia" style="width:300px">
   </div>
-
   <div class="subbloque">
     <label>Ocupación:</label><br>
     <input type="text" id="ocupacion" style="width:300px">
@@ -80,47 +59,56 @@ h1 { color: #0b5ed7; }
 
   <div class="subbloque">
     <strong>Tipo de tos</strong><br>
-    <label><input type="radio" name="tosTipo" id="productiva"> Productiva</label><br>
-    <label><input type="radio" name="tosTipo" id="seca"> Seca</label>
+    <label><input type="radio" name="tosTipo" value="productiva" id="productiva"> Productiva</label><br>
+    <label><input type="radio" name="tosTipo" value="seca" id="seca"> Seca</label>
   </div>
 
   <div class="subbloque">
     <strong>Tiempo de evolución</strong><br>
-    <label><input type="radio" name="tiempoTos"> Aguda (&lt; 3 semanas)</label><br>
-    <label><input type="radio" name="tiempoTos"> Subaguda (3–8 semanas)</label><br>
-    <label><input type="radio" name="tiempoTos"> Crónica (&gt; 8 semanas)</label>
+    <label><input type="radio" name="tiempoTos" value="aguda"> Aguda (&lt;3 semanas)</label><br>
+    <label><input type="radio" name="tiempoTos" value="subaguda"> Subaguda (3–8 semanas)</label><br>
+    <label><input type="radio" name="tiempoTos" value="crónica"> Crónica (&gt;8 semanas)</label>
   </div>
 
   <div class="subbloque" id="bloqueEsputo" style="display:none">
     <strong>Color del esputo</strong><br>
-    <label><input type="checkbox"> Blanco</label><br>
-    <label><input type="checkbox"> Amarillo</label><br>
-    <label><input type="checkbox"> Verdoso</label><br>
-    <label><input type="checkbox"> Con sangre <span class="alerta">🚨</span></label>
+    <label><input type="checkbox" name="esputo" value="blanco"> Blanco</label><br>
+    <label><input type="checkbox" name="esputo" value="amarillo"> Amarillo</label><br>
+    <label><input type="checkbox" name="esputo" value="verdoso"> Verdoso</label><br>
+    <label><input type="checkbox" name="esputo" value="con sangre"> Con sangre <span class="alerta">🚨</span></label>
   </div>
 </div>
 
 <!-- BLOQUE DISNEA -->
 <div class="bloque" id="bloqueDisnea" style="display:none">
   <h3>Disnea</h3>
-
   <div class="subbloque">
     <strong>Tipo de disnea</strong><br>
-    <label><input type="checkbox"> De esfuerzo</label><br>
-    <label><input type="checkbox"> En reposo <span class="alerta">🚨</span></label><br>
-    <label><input type="checkbox"> Nocturna (PND)</label><br>
-    <label><input type="checkbox"> Progresiva</label>
+    <label><input type="checkbox" class="disneaTipo" value="de esfuerzo"> De esfuerzo</label><br>
+    <label><input type="checkbox" class="disneaTipo" value="en reposo"> En reposo <span class="alerta">🚨</span></label><br>
+    <label><input type="checkbox" class="disneaTipo" value="nocturna"> Nocturna (PND)</label><br>
+    <label><input type="checkbox" class="disneaTipo" value="progresiva"> Progresiva</label>
   </div>
 </div>
 
+<!-- BOTÓN RESUMEN -->
+<div class="bloque">
+  <button id="btnResumen">🩺 Generar resumen clínico</button>
+</div>
+
+<!-- SALIDA DEL RESUMEN -->
+<div class="bloque" id="resumenClinico" style="display:none">
+  <h3>Resumen clínico</h3>
+  <pre id="textoResumen"></pre>
+</div>
+
 <script>
+// Mostrar/Ocultar bloques de tos y disnea
 const tos = document.getElementById("tos");
 const disnea = document.getElementById("disnea");
-
 const bloqueTos = document.getElementById("bloqueTos");
 const bloqueDisnea = document.getElementById("bloqueDisnea");
 const bloqueEsputo = document.getElementById("bloqueEsputo");
-
 const productiva = document.getElementById("productiva");
 const seca = document.getElementById("seca");
 
@@ -131,70 +119,64 @@ tos.addEventListener("change", () => {
   seca.checked = false;
 });
 
+disnea.addEventListener("change", () => {
+  bloqueDisnea.style.display = disnea.checked ? "block" : "none";
+});
+
 productiva.addEventListener("change", () => {
-  bloqueEsputo.style.display = "block";
+  bloqueEsputo.style.display = productiva.checked ? "block" : "none";
 });
 
 seca.addEventListener("change", () => {
   bloqueEsputo.style.display = "none";
 });
 
-disnea.addEventListener("change", () => {
-  bloqueDisnea.style.display = disnea.checked ? "block" : "none";
-});
-</script>
+// Generar resumen clínico
+document.getElementById("btnResumen").addEventListener("click", () => {
+  let resumen = "";
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+  // Datos filiatorios
+  resumen += "Paciente: " + (document.getElementById("nombre").value || "NC") + "\n";
+  resumen += "Edad: " + (document.getElementById("edad").value || "?") + " años\n";
+  resumen += "Sexo: " + (document.getElementById("sexo").value || "NC") + "\n";
+  resumen += "Procedencia: " + (document.getElementById("procedencia").value || "NC") + "\n";
+  resumen += "Ocupación: " + (document.getElementById("ocupacion").value || "NC") + "\n\n";
 
-  const btn = document.getElementById("btnResumen");
-  if (!btn) {
-    console.log("❌ No se encontró el botón");
-    return;
-  }
+  // Motivo de consulta
+  resumen += "Motivo de consulta:\n";
 
-  btn.addEventListener("click", () => {
-    let r = "";
+  // Tos
+  if (tos.checked) {
+    const tipoTos = document.querySelector('input[name="tosTipo"]:checked');
+    resumen += "- Tos";
+    if (tipoTos) resumen += " (" + tipoTos.value;
 
-    r += "Paciente: " + (document.getElementById("nombre")?.value || "NC") + "\n";
-    r += "Edad: " + (document.getElementById("edad")?.value || "?") + " años\n";
-    r += "Sexo: " + (document.getElementById("sexo")?.value || "NC") + "\n";
-    r += "Procedencia: " + (document.getElementById("procedencia")?.value || "NC") + "\n";
-    r += "Ocupación: " + (document.getElementById("ocupacion")?.value || "NC") + "\n\n";
-
-    r += "Motivo de consulta:\n";
-
-    if (document.getElementById("tos")?.checked) {
-      const tipoTos = document.querySelector('input[name="tosTipo"]:checked');
-      r += "- Tos";
-      if (tipoTos) r += " (" + tipoTos.value + ")";
-      r += "\n";
-    }
-
-    if (document.getElementById("disnea")?.checked) {
-      const disneas = [...document.querySelectorAll(".disneaTipo:checked")]
+    // Esputo solo si productiva
+    if (tipoTos && tipoTos.value === "productiva") {
+      const esputos = [...document.querySelectorAll('input[name="esputo"]:checked')]
         .map(e => e.value)
         .join(", ");
-      r += "- Disnea";
-      if (disneas) r += " (" + disneas + ")";
-      r += "\n";
+      if (esputos) resumen += ", esputo " + esputos;
     }
 
-    document.getElementById("textoResumen").textContent = r;
-    document.getElementById("resumenClinico").style.display = "block";
-  });
+    if (tipoTos) resumen += ")";
+    resumen += "\n";
+  }
 
+  // Disnea
+  if (disnea.checked) {
+    const disneas = [...document.querySelectorAll(".disneaTipo:checked")]
+      .map(e => e.value)
+      .join(", ");
+    resumen += "- Disnea";
+    if (disneas) resumen += " (" + disneas + ")";
+    resumen += "\n";
+  }
+
+  document.getElementById("textoResumen").textContent = resumen;
+  document.getElementById("resumenClinico").style.display = "block";
 });
 </script>
-
-<div class="bloque">
-  <button id="btnResumen">🩺 Generar resumen clínico</button>
-</div>
-
-<div class="bloque" id="resumenClinico" style="display:none">
-  <h3>Resumen clínico</h3>
-  <pre id="textoResumen"></pre>
-</div>
 
 </body>
 </html>
