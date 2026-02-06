@@ -1,37 +1,87 @@
-<script>
-document.addEventListener("DOMContentLoaded", function () {
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Evaluación Clínica Respiratoria</title>
 
-  const tos = document.getElementById("tos");
-  const disnea = document.getElementById("disnea");
-
-  const bloqueTos = document.getElementById("bloqueTos");
-  const bloqueDisnea = document.getElementById("bloqueDisnea");
-  const bloqueEsputo = document.getElementById("bloqueEsputo");
-
-  tos.addEventListener("change", function() {
-    if (tos.checked) {
-      bloqueTos.style.display = "block";
-    } else {
-      bloqueTos.style.display = "none";
-      bloqueEsputo.style.display = "none";
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
     }
-  });
 
-  disnea.addEventListener("change", function() {
-    if (disnea.checked) {
-      bloqueDisnea.style.display = "block";
-    } else {
-      bloqueDisnea.style.display = "none";
+    h1 {
+      color: #0b5ed7;
     }
-  });
 
-  window.mostrarEsputo = function() {
-    bloqueEsputo.style.display = "block";
-  }
+    .bloque {
+      background: #ffffff;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
 
-  window.ocultarEsputo = function() {
-    bloqueEsputo.style.display = "none";
-  }
+    .oculto {
+      display: none;
+    }
 
-});
-</script>
+    .alerta {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Evaluación Clínica Respiratoria</h1>
+
+<!-- MOTIVO -->
+<div class="bloque">
+  <h3>Motivo de consulta</h3>
+  <label>
+    <input type="checkbox" id="tos"> Tos
+  </label><br>
+  <label>
+    <input type="checkbox" id="disnea"> Disnea
+  </label>
+</div>
+
+<!-- TOS -->
+<div class="bloque oculto" id="bloqueTos">
+  <h3>Características de la tos</h3>
+  <label>
+    <input type="radio" name="tipoTos" id="tosProductiva"> Productiva
+  </label><br>
+  <label>
+    <input type="radio" name="tipoTos" id="tosSeca"> Seca
+  </label>
+</div>
+
+<!-- ESPUTO -->
+<div class="bloque oculto" id="bloqueEsputo">
+  <h3>Color del esputo</h3>
+  <label><input type="checkbox"> Blanco</label><br>
+  <label><input type="checkbox"> Amarillo</label><br>
+  <label><input type="checkbox"> Verdoso</label><br>
+  <label><input type="checkbox"> Con sangre <span class="alerta">🚨</span></label>
+  <p class="alerta">Signo de alarma: hemoptisis</p>
+</div>
+
+<!-- DISNEA -->
+<div class="bloque oculto" id="bloqueDisnea">
+  <h3>Tipo de disnea</h3>
+  <label><input type="checkbox"> De esfuerzo</label><br>
+  <label><input type="checkbox"> En reposo <span class="alerta">🚨</span></label><br>
+  <label><input type="checkbox"> Nocturna (PND)</label><br>
+  <label><input type="checkbox"> Progresiva</label>
+</div>
+
+<!-- FACTORES -->
+<div class="bloque">
+  <h3>Factores de riesgo</h3>
+  <label><input type="checkbox"> Fumador</label><br>
+  <label><input type="checkbox"> Contacto TB</label><br>
+  <label><input type="checkbox"> Asma / EPOC</label>
