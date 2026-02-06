@@ -31,25 +31,6 @@ h1 { color: #0b5ed7; }
 <div class="bloque">
   <h3>Motivo de consulta</h3>
   <label><input type="checkbox" id="tos"> Tos</label><br>
-  <div id="tiempoSintomas" style="display:none; margin-top:15px;">
-  <h4>Tiempo de evolución de la tos</h4>
-
-  <label>
-    <input type="radio" name="tiempo" value="aguda">
-    Aguda (&lt; 3 semanas)
-  </label><br>
-
-  <label>
-    <input type="radio" name="tiempo" value="subaguda">
-    Subaguda (3–8 semanas)
-  </label><br>
-
-  <label>
-    <input type="radio" name="tiempo" value="cronica">
-    Crónica (&gt; 8 semanas)
-  </label>
-</div>
-
   <label><input type="checkbox" id="disnea"> Disnea</label>
 </div>
 
@@ -57,6 +38,13 @@ h1 { color: #0b5ed7; }
   <h3>Características de la tos</h3>
   <label><input type="radio" name="tosTipo" id="productiva"> Productiva</label><br>
   <label><input type="radio" name="tosTipo" id="seca"> Seca</label>
+</div>
+
+<div class="bloque" id="bloqueTiempoTos" style="display:none">
+  <h3>Tiempo de evolución de la tos</h3>
+  <label><input type="radio" name="tiempoTos"> Aguda (&lt; 3 semanas)</label><br>
+  <label><input type="radio" name="tiempoTos"> Subaguda (3–8 semanas)</label><br>
+  <label><input type="radio" name="tiempoTos"> Crónica (&gt; 8 semanas)</label>
 </div>
 
 <div class="bloque" id="bloqueEsputo" style="display:none">
@@ -87,6 +75,7 @@ const tos = document.getElementById("tos");
 const disnea = document.getElementById("disnea");
 
 const bloqueTos = document.getElementById("bloqueTos");
+const bloqueTiempoTos = document.getElementById("bloqueTiempoTos");
 const bloqueEsputo = document.getElementById("bloqueEsputo");
 const bloqueDisnea = document.getElementById("bloqueDisnea");
 
@@ -95,6 +84,7 @@ const seca = document.getElementById("seca");
 
 tos.addEventListener("change", () => {
   bloqueTos.style.display = tos.checked ? "block" : "none";
+  bloqueTiempoTos.style.display = tos.checked ? "block" : "none";
   bloqueEsputo.style.display = "none";
   productiva.checked = false;
   seca.checked = false;
