@@ -112,6 +112,17 @@ h1 { color: #0b5ed7; }
     <label><input type="checkbox"> Progresiva</label>
   </div>
 </div>
+  
+<!-- BOTÓN RESUMEN CLÍNICO -->
+<div class="bloque">
+  <button onclick="generarResumen()">🩺 Generar resumen clínico</button>
+</div>
+
+<!-- SALIDA DEL RESUMEN -->
+<div class="bloque" id="resumenClinico" style="display:none">
+  <h3>Resumen clínico</h3>
+  <div id="textoResumen"></div>
+</div>
 
 <script>
 const tos = document.getElementById("tos");
