@@ -53,7 +53,34 @@ h1 { color: #0b5ed7; }
   <label><input type="checkbox" id="disnea"> Disnea</label>
   <label><input type="checkbox" id="dolortoracico"> Dolor Toracico</label>
 </div>
+  
+<!-- BLOQUE DOLORTORACICO -->
+<div class="bloque" id="bloquedolortoracico" style="display:none">
+  <h3>dolortoracico</h3>
 
+  <div class="subbloque">
+    <strong>Tipo de dolor</strong><br>
+    <label><input type="radio" name="tosTipo" value="productiva" id="productiva"> Productiva</label><br>
+    <label><input type="radio" name="tosTipo" value="seca" id="seca"> Seca</label>
+  </div>
+
+  <div class="subbloque">
+    <strong>Tiempo de evolución</strong><br>
+    <label><input type="radio" name="tiempoTos" value="aguda"> Aguda (&lt;3 semanas)</label><br>
+    <label><input type="radio" name="tiempoTos" value="subaguda"> Subaguda (3–8 semanas)</label><br>
+    <label><input type="radio" name="tiempoTos" value="crónica"> Crónica (&gt;8 semanas)</label>
+  </div>
+
+  <div class="subbloque" id="bloqueEsputo" style="display:none">
+    <strong>Color del esputo</strong><br>
+    <label><input type="checkbox" name="esputo" value="blanco"> Blanco</label><br>
+    <label><input type="checkbox" name="esputo" value="amarillo"> Amarillo</label><br>
+    <label><input type="checkbox" name="esputo" value="verdoso"> Verdoso</label><br>
+    <label><input type="checkbox" name="esputo" value="con sangre"> Con sangre <span class="alerta">🚨</span></label>
+  </div>
+</div>
+
+  
 <!-- BLOQUE TOS -->
 <div class="bloque" id="bloqueTos" style="display:none">
   <h3>Tos</h3>
