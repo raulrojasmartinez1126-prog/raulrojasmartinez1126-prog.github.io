@@ -1,17 +1,98 @@
-<div id="tiempoSintomas" style="display:none; margin-top:15px;">
-  <h4>Tiempo de evolución de los síntomas</h4>
-  <label>
-    <input type="radio" name="tiempo" value="aguda">
-    Aguda (&lt; 3 semanas)
-  </label><br>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Evaluación Clínica Respiratoria</title>
 
-  <label>
-    <input type="radio" name="tiempo" value="subaguda">
-    Subaguda (3–8 semanas)
-  </label><br>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  padding: 20px;
+}
 
-  <label>
-    <input type="radio" name="tiempo" value="cronica">
-    Crónica (&gt; 8 semanas)
-  </label>
+h1 { color: #0b5ed7; }
+
+.bloque {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+.alerta { color: red; font-weight: bold; }
+</style>
+</head>
+
+<body>
+
+<h1>Evaluación Clínica Respiratoria</h1>
+
+<div class="bloque">
+  <h3>Motivo de consulta</h3>
+  <label><input type="checkbox" id="tos"> Tos</label><br>
+  <label><input type="checkbox" id="disnea"> Disnea</label>
 </div>
+
+<div class="bloque" id="bloqueTos" style="display:none">
+  <h3>Características de la tos</h3>
+  <label><input type="radio" name="tosTipo" id="productiva"> Productiva</label><br>
+  <label><input type="radio" name="tosTipo" id="seca"> Seca</label>
+</div>
+
+<div class="bloque" id="bloqueEsputo" style="display:none">
+  <h3>Color del esputo</h3>
+  <label><input type="checkbox"> Blanco</label><br>
+  <label><input type="checkbox"> Amarillo</label><br>
+  <label><input type="checkbox"> Verdoso</label><br>
+  <label><input type="checkbox"> Con sangre <span class="alerta">🚨</span></label>
+</div>
+
+<div class="bloque" id="bloqueDisnea" style="display:none">
+  <h3>Tipo de disnea</h3>
+  <label><input type="checkbox"> De esfuerzo</label><br>
+  <label><input type="checkbox"> En reposo <span class="alerta">🚨</span></label><br>
+  <label><input type="checkbox"> Nocturna (PND)</label><br>
+  <label><input type="checkbox"> Progresiva</label>
+</div>
+
+<div class="bloque">
+  <h3>Factores de riesgo</h3>
+  <label><input type="checkbox"> Fumador</label><br>
+  <label><input type="checkbox"> Contacto TB</label><br>
+  <label><input type="checkbox"> Asma / EPOC</label>
+</div>
+
+<script>
+const tos = document.getElementById("tos");
+const disnea = document.getElementById("disnea");
+
+const bloqueTos = document.getElementById("bloqueTos");
+const bloqueEsputo = document.getElementById("bloqueEsputo");
+const bloqueDisnea = document.getElementById("bloqueDisnea");
+
+const productiva = document.getElementById("productiva");
+const seca = document.getElementById("seca");
+
+tos.addEventListener("change", () => {
+  bloqueTos.style.display = tos.checked ? "block" : "none";
+  bloqueEsputo.style.display = "none";
+  productiva.checked = false;
+  seca.checked = false;
+});
+
+productiva.addEventListener("change", () => {
+  bloqueEsputo.style.display = "block";
+});
+
+seca.addEventListener("change", () => {
+  bloqueEsputo.style.display = "none";
+});
+
+disnea.addEventListener("change", () => {
+  bloqueDisnea.style.display = disnea.checked ? "block" : "none";
+});
+</script>
+
+</body>
+</html>
