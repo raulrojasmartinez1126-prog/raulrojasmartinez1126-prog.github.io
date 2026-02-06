@@ -125,6 +125,7 @@ h1 { color: #0b5ed7; }
 </div>
 
 <script>
+/* ====== ELEMENTOS ====== */
 const tos = document.getElementById("tos");
 const disnea = document.getElementById("disnea");
 
@@ -135,6 +136,10 @@ const bloqueEsputo = document.getElementById("bloqueEsputo");
 const productiva = document.getElementById("productiva");
 const seca = document.getElementById("seca");
 
+const resumenDiv = document.getElementById("resumenClinico");
+const textoResumen = document.getElementById("textoResumen");
+
+/* ====== EVENTOS ====== */
 tos.addEventListener("change", () => {
   bloqueTos.style.display = tos.checked ? "block" : "none";
   bloqueEsputo.style.display = "none";
@@ -153,50 +158,37 @@ seca.addEventListener("change", () => {
 disnea.addEventListener("change", () => {
   bloqueDisnea.style.display = disnea.checked ? "block" : "none";
 });
-  <script>
-/* --- TU SCRIPT ACTUAL SE QUEDA TAL CUAL --- */
 
+/* ====== RESUMEN CLÍNICO ====== */
 function generarResumen() {
-
   let resumen = "";
 
-  // Datos filiatorios
   const nombre = document.getElementById("nombre").value;
   const edad = document.getElementById("edad").value;
   const sexo = document.getElementById("sexo").value;
   const procedencia = document.getElementById("procedencia").value;
   const ocupacion = document.getElementById("ocupacion").value;
 
-  resumen += "<strong>Datos filiatorios:</strong><br>";
-  if (nombre) resumen += "Paciente: " + nombre + "<br>";
-  if (edad) resumen += "Edad: " + edad + " años<br>";
-  if (sexo) resumen += "Sexo: " + sexo + "<br>";
-  if (procedencia) resumen += "Procedencia: " + procedencia + "<br>";
-  if (ocupacion) resumen += "Ocupación: " + ocupacion + "<br>";
+  resumen += `<strong>Paciente:</strong> ${nombre || "No consignado"}<br>`;
+  resumen += `<strong>Edad:</strong> ${edad || "No consignada"} años<br>`;
+  resumen += `<strong>Sexo:</strong> ${sexo || "No consignado"}<br>`;
+  resumen += `<strong>Procedencia:</strong> ${procedencia || "No consignada"}<br>`;
+  resumen += `<strong>Ocupación:</strong> ${ocupacion || "No consignada"}<br><br>`;
 
-  // Motivo de consulta
-  resumen += "<br><strong>Motivo de consulta:</strong><br>";
+  resumen += `<strong>Motivo de consulta:</strong><br>`;
 
-  if (tos.checked) {
-    resumen += "- Tos ";
+  if (tos.checked) resumen += "- Tos<br>";
+  if (disnea.checked) resumen += "- Disnea<br>";
 
-    if (productiva.checked) resumen += "productiva";
-    if (seca.checked) resumen += "seca";
-
-    resumen += "<br>";
+  if (!tos.checked && !disnea.checked) {
+    resumen += "No referido<br>";
   }
 
-  if (disnea.checked) {
-    resumen += "- Disnea<br>";
-  }
-
-  // Mostrar resumen
-  document.getElementById("textoResumen").innerHTML = resumen;
-  document.getElementById("resumenClinico").style.display = "block";
+  textoResumen.innerHTML = resumen;
+  resumenDiv.style.display = "block";
 }
 </script>
 
-</script>
 
 </body>
 </html>
