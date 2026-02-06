@@ -153,6 +153,49 @@ seca.addEventListener("change", () => {
 disnea.addEventListener("change", () => {
   bloqueDisnea.style.display = disnea.checked ? "block" : "none";
 });
+  <script>
+/* --- TU SCRIPT ACTUAL SE QUEDA TAL CUAL --- */
+
+function generarResumen() {
+
+  let resumen = "";
+
+  // Datos filiatorios
+  const nombre = document.getElementById("nombre").value;
+  const edad = document.getElementById("edad").value;
+  const sexo = document.getElementById("sexo").value;
+  const procedencia = document.getElementById("procedencia").value;
+  const ocupacion = document.getElementById("ocupacion").value;
+
+  resumen += "<strong>Datos filiatorios:</strong><br>";
+  if (nombre) resumen += "Paciente: " + nombre + "<br>";
+  if (edad) resumen += "Edad: " + edad + " años<br>";
+  if (sexo) resumen += "Sexo: " + sexo + "<br>";
+  if (procedencia) resumen += "Procedencia: " + procedencia + "<br>";
+  if (ocupacion) resumen += "Ocupación: " + ocupacion + "<br>";
+
+  // Motivo de consulta
+  resumen += "<br><strong>Motivo de consulta:</strong><br>";
+
+  if (tos.checked) {
+    resumen += "- Tos ";
+
+    if (productiva.checked) resumen += "productiva";
+    if (seca.checked) resumen += "seca";
+
+    resumen += "<br>";
+  }
+
+  if (disnea.checked) {
+    resumen += "- Disnea<br>";
+  }
+
+  // Mostrar resumen
+  document.getElementById("textoResumen").innerHTML = resumen;
+  document.getElementById("resumenClinico").style.display = "block";
+}
+</script>
+
 </script>
 
 </body>
