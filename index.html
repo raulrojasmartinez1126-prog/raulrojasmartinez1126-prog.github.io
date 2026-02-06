@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Evaluación Clínica Respiratoria</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+    }
+    h1 {
+      color: #0b5ed7;
+    }
+    .bloque {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .oculto {
+      display: none;
+    }
+    .alerta {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Evaluación Clínica Respiratoria</h1>
+
+<div class="bloque">
+  <h3>Motivo de consulta</h3>
+  <label><input type="checkbox" id="tos"> Tos</label><br>
+  <label><input type="checkbox" id="disnea"> Disnea</label>
+</div>
+
+<div class="bloque oculto" id="bloqueTos">
+  <h3>Características de la tos</h3>
+  <label><input type="radio" name="tosTipo" onclick="mostrarEsputo()"> Productiva</label><br>
+  <label><input type="radio" name="tosTipo" onclick="ocultarEsputo()"> Seca</label>
+</div>
+
+<div class="bloque oculto" id="bloqueEsputo">
+  <h3>Color del esputo</h3>
+  <label><input type="checkbox"> Blanco</label><br>
+  <label><input type="checkbox"> Amarillo</label><br>
+  <label><input type="checkbox"> Verdoso</label><br>
+  <label><input type="checkbox"> Con sangre</label>
+  <p class="alerta">⚠ Hemoptisis: signo de alarma</p>
+</div>
+
+<div class="bloque">
+  <h3>Factores de riesgo</h3>
+  <label><input type="checkbox"> Fumador</label><br>
+  <label><input type="checkbox"> Contacto TB</label><br>
+  <label><input type="checkbox"> Asma / EPOC</label>
+</div>
+
+<script>
+  const tos = document.getElementById("tos");
+  const bloqueTos = document.getElementById("bloqueTos");
+
+  tos.addEventListener("change", function() {
+    if (this.checked) {
+      bloqueTos.classList.remove("oculto");
+    } else {
+      bloqueTos.classList.add("oculto");
+      ocultarEsputo();
+    }
+  });
+
+  function mostrarEsputo() {
+    document.getElementById("bloqueEsputo").classList.remove("oculto");
+  }
+
+  function ocultarEsputo() {
+    document.getElementById("bloqueEsputo").classList.add("oculto");
+  }
+</script>
+
+</body>
+</html>
