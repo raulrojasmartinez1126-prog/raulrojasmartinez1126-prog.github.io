@@ -10,21 +10,17 @@ body {
   background: #f4f6f8;
   padding: 20px;
 }
-
 h1 { color: #0b5ed7; }
-
 .bloque {
   background: white;
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 8px;
 }
-
 .subbloque {
   margin-left: 20px;
   margin-top: 10px;
 }
-
 .alerta { color: red; font-weight: bold; }
 </style>
 </head>
@@ -36,35 +32,17 @@ h1 { color: #0b5ed7; }
 <!-- DATOS FILIATORIOS -->
 <div class="bloque">
   <h3>Datos filiatorios</h3>
-
+  <div class="subbloque"><input id="nombre" placeholder="Nombre completo"></div>
+  <div class="subbloque"><input id="edad" type="number" placeholder="Edad"></div>
   <div class="subbloque">
-    <label>Nombre y apellido:</label><br>
-    <input type="text" id="nombre" style="width:300px">
-  </div>
-
-  <div class="subbloque">
-    <label>Edad:</label><br>
-    <input type="number" id="edad" min="0" style="width:80px"> años
-  </div>
-
-  <div class="subbloque">
-    <label>Sexo:</label><br>
     <select id="sexo">
-      <option value="">-- seleccionar --</option>
-      <option value="Masculino">Masculino</option>
-      <option value="Femenino">Femenino</option>
+      <option value="">Sexo</option>
+      <option>Masculino</option>
+      <option>Femenino</option>
     </select>
   </div>
-
-  <div class="subbloque">
-    <label>Procedencia:</label><br>
-    <input type="text" id="procedencia" style="width:300px">
-  </div>
-
-  <div class="subbloque">
-    <label>Ocupación:</label><br>
-    <input type="text" id="ocupacion" style="width:300px">
-  </div>
+  <div class="subbloque"><input id="procedencia" placeholder="Procedencia"></div>
+  <div class="subbloque"><input id="ocupacion" placeholder="Ocupación"></div>
 </div>
 
 <!-- MOTIVO -->
@@ -79,9 +57,72 @@ h1 { color: #0b5ed7; }
   <h3>Tos</h3>
 
   <div class="subbloque">
-    <strong>Tipo</strong><br>
     <label><input type="radio" name="tosTipo" value="productiva"> Productiva</label><br>
     <label><input type="radio" name="tosTipo" value="seca"> Seca</label>
   </div>
 
-  <!-- ESPUTO -->
+  <div class="subbloque" id="bloqueEsputo" style="display:none">
+    <strong>Color del esputo</strong><br>
+    <label><input type="checkbox" value="blanco"> Blanco</label><br>
+    <label><input type="checkbox" value="amarillo"> Amarillo</label><br>
+    <label><input type="checkbox" value="verdoso"> Verdoso</label><br>
+    <label><input type="checkbox" value="hemoptoico"> Con sangre 🚨</label>
+  </div>
+</div>
+
+<!-- DISNEA -->
+<div class="bloque" id="bloqueDisnea" style="display:none">
+  <h3>Disnea</h3>
+  <label><input type="checkbox" class="disneaTipo" value="de esfuerzo"> De esfuerzo</label><br>
+  <label><input type="checkbox" class="disneaTipo" value="en reposo"> En reposo 🚨</label><br>
+  <label><input type="checkbox" class="disneaTipo" value="nocturna"> Nocturna</label>
+</div>
+
+<!-- BOTÓN -->
+<div class="bloque">
+  <button onclick="generarResumen()">🩺 Generar resumen clínico</button>
+</div>
+
+<!-- RESUMEN -->
+<div class="bloque" id="resumenClinico" style="display:none">
+  <h3>Resumen clínico</h3>
+  <div id="textoResumen"></div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+const tos = document.getElementById("tos");
+const disnea = document.getElementById("disnea");
+const bloqueTos = document.getElementById("bloqueTos");
+const bloqueDisnea = document.getElementById("bloqueDisnea");
+const bloqueEsputo = document.getElementById("bloqueEsputo");
+
+tos.addEventListener("change", () => {
+  bloqueTos.style.display = tos.checked ? "block" : "none";
+});
+
+disnea.addEventListener("change", () => {
+  bloqueDisnea.style.display = disnea.checked ? "block" : "none";
+});
+
+document.querySelectorAll('input[name="tosTipo"]').forEach(radio => {
+  radio.addEventListener("change", () => {
+    bloqueEsputo.style.display = radio.value === "productiva" ? "block" : "none";
+  });
+});
+
+window.generarResumen = function () {
+  let r = "";
+  r += `<b>Paciente:</b> ${nombre.value}<br>`;
+  if (tos.checked) r += "– Tos<br>";
+  if (disnea.checked) r += "– Disnea<br>";
+  textoResumen.innerHTML = r;
+  resumenClinico.style.display = "block";
+};
+
+});
+</script>
+
+</body>
+</html>
