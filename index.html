@@ -184,6 +184,11 @@ function generarResumen() {
   document.getElementById("textoResumen").innerHTML = r;
   document.getElementById("resumenClinico").style.display = "block";
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const boton = document.getElementById("btnResumen");
+  boton.addEventListener("click", generarResumen);
+});
 </script>
 
 </script>
