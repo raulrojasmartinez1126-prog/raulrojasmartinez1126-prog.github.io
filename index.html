@@ -1,48 +1,37 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Evaluación Clínica Respiratoria</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      padding: 20px;
-    }
-    h1 {
-      color: #0b5ed7;
-    }
-    .bloque {
-      background: white;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    .oculto {
-      display: none;
-    }
-    .alerta {
-      color: red;
-      font-weight: bold;
-    }
-  </style>
-</head>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-<body>
+  const tos = document.getElementById("tos");
+  const disnea = document.getElementById("disnea");
 
-<h1>Evaluación Clínica Respiratoria</h1>
+  const bloqueTos = document.getElementById("bloqueTos");
+  const bloqueDisnea = document.getElementById("bloqueDisnea");
+  const bloqueEsputo = document.getElementById("bloqueEsputo");
 
-<!-- MOTIVO DE CONSULTA -->
-<div class="bloque">
-  <h3>Motivo de consulta</h3>
-  <label><input type="checkbox" id="tos"> Tos</label><br>
-  <label><input type="checkbox" id="disnea"> Disnea</label>
-</div>
+  tos.addEventListener("change", function() {
+    if (tos.checked) {
+      bloqueTos.style.display = "block";
+    } else {
+      bloqueTos.style.display = "none";
+      bloqueEsputo.style.display = "none";
+    }
+  });
 
-<!-- TOS -->
-<div class="bloque oculto" id="bloqueTos">
-  <h3>Características de la tos</h3>
-  <label><input type="radio" name="tosTipo" onclick="mostrarEsputo()"> Productiva</label><br>
-  <label><input type="radio" name="tosTipo" onclick="oculta
+  disnea.addEventListener("change", function() {
+    if (disnea.checked) {
+      bloqueDisnea.style.display = "block";
+    } else {
+      bloqueDisnea.style.display = "none";
+    }
+  });
 
+  window.mostrarEsputo = function() {
+    bloqueEsputo.style.display = "block";
+  }
+
+  window.ocultarEsputo = function() {
+    bloqueEsputo.style.display = "none";
+  }
+
+});
+</script>
