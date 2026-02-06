@@ -144,36 +144,46 @@ disnea.addEventListener("change", () => {
 });
 </script>
 
-  <script>
-document.getElementById("btnResumen").addEventListener("click", () => {
-  let r = "";
+<script>
+document.addEventListener("DOMContentLoaded", () => {
 
-  r += "Paciente: " + (document.getElementById("nombre")?.value || "NC") + "\n";
-  r += "Edad: " + (document.getElementById("edad")?.value || "?") + " años\n";
-  r += "Sexo: " + (document.getElementById("sexo")?.value || "NC") + "\n";
-  r += "Procedencia: " + (document.getElementById("procedencia")?.value || "NC") + "\n";
-  r += "Ocupación: " + (document.getElementById("ocupacion")?.value || "NC") + "\n\n";
-
-  r += "Motivo de consulta:\n";
-
-  if (document.getElementById("tos")?.checked) {
-    const tipoTos = document.querySelector('input[name="tosTipo"]:checked');
-    r += "- Tos";
-    if (tipoTos) r += " (" + tipoTos.value + ")";
-    r += "\n";
+  const btn = document.getElementById("btnResumen");
+  if (!btn) {
+    console.log("❌ No se encontró el botón");
+    return;
   }
 
-  if (document.getElementById("disnea")?.checked) {
-    const disneas = [...document.querySelectorAll(".disneaTipo:checked")]
-      .map(e => e.value)
-      .join(", ");
-    r += "- Disnea";
-    if (disneas) r += " (" + disneas + ")";
-    r += "\n";
-  }
+  btn.addEventListener("click", () => {
+    let r = "";
 
-  document.getElementById("textoResumen").textContent = r;
-  document.getElementById("resumenClinico").style.display = "block";
+    r += "Paciente: " + (document.getElementById("nombre")?.value || "NC") + "\n";
+    r += "Edad: " + (document.getElementById("edad")?.value || "?") + " años\n";
+    r += "Sexo: " + (document.getElementById("sexo")?.value || "NC") + "\n";
+    r += "Procedencia: " + (document.getElementById("procedencia")?.value || "NC") + "\n";
+    r += "Ocupación: " + (document.getElementById("ocupacion")?.value || "NC") + "\n\n";
+
+    r += "Motivo de consulta:\n";
+
+    if (document.getElementById("tos")?.checked) {
+      const tipoTos = document.querySelector('input[name="tosTipo"]:checked');
+      r += "- Tos";
+      if (tipoTos) r += " (" + tipoTos.value + ")";
+      r += "\n";
+    }
+
+    if (document.getElementById("disnea")?.checked) {
+      const disneas = [...document.querySelectorAll(".disneaTipo:checked")]
+        .map(e => e.value)
+        .join(", ");
+      r += "- Disnea";
+      if (disneas) r += " (" + disneas + ")";
+      r += "\n";
+    }
+
+    document.getElementById("textoResumen").textContent = r;
+    document.getElementById("resumenClinico").style.display = "block";
+  });
+
 });
 </script>
 
