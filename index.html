@@ -20,6 +20,11 @@ h1 { color: #0b5ed7; }
   border-radius: 8px;
 }
 
+.subbloque {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
 .alerta { color: red; font-weight: bold; }
 </style>
 </head>
@@ -28,46 +33,50 @@ h1 { color: #0b5ed7; }
 
 <h1>Evaluación Clínica Respiratoria</h1>
 
+<!-- MOTIVO DE CONSULTA -->
 <div class="bloque">
   <h3>Motivo de consulta</h3>
   <label><input type="checkbox" id="tos"> Tos</label><br>
   <label><input type="checkbox" id="disnea"> Disnea</label>
 </div>
 
+<!-- BLOQUE TOS -->
 <div class="bloque" id="bloqueTos" style="display:none">
-  <h3>Características de la tos</h3>
-  <label><input type="radio" name="tosTipo" id="productiva"> Productiva</label><br>
-  <label><input type="radio" name="tosTipo" id="seca"> Seca</label>
+  <h3>Tos</h3>
+
+  <div class="subbloque">
+    <strong>Tipo de tos</strong><br>
+    <label><input type="radio" name="tosTipo" id="productiva"> Productiva</label><br>
+    <label><input type="radio" name="tosTipo" id="seca"> Seca</label>
+  </div>
+
+  <div class="subbloque">
+    <strong>Tiempo de evolución</strong><br>
+    <label><input type="radio" name="tiempoTos"> Aguda (&lt; 3 semanas)</label><br>
+    <label><input type="radio" name="tiempoTos"> Subaguda (3–8 semanas)</label><br>
+    <label><input type="radio" name="tiempoTos"> Crónica (&gt; 8 semanas)</label>
+  </div>
+
+  <div class="subbloque" id="bloqueEsputo" style="display:none">
+    <strong>Color del esputo</strong><br>
+    <label><input type="checkbox"> Blanco</label><br>
+    <label><input type="checkbox"> Amarillo</label><br>
+    <label><input type="checkbox"> Verdoso</label><br>
+    <label><input type="checkbox"> Con sangre <span class="alerta">🚨</span></label>
+  </div>
 </div>
 
-<div class="bloque" id="bloqueTiempoTos" style="display:none">
-  <h3>Tiempo de evolución de la tos</h3>
-  <label><input type="radio" name="tiempoTos"> Aguda (&lt; 3 semanas)</label><br>
-  <label><input type="radio" name="tiempoTos"> Subaguda (3–8 semanas)</label><br>
-  <label><input type="radio" name="tiempoTos"> Crónica (&gt; 8 semanas)</label>
-</div>
-
-<div class="bloque" id="bloqueEsputo" style="display:none">
-  <h3>Color del esputo</h3>
-  <label><input type="checkbox"> Blanco</label><br>
-  <label><input type="checkbox"> Amarillo</label><br>
-  <label><input type="checkbox"> Verdoso</label><br>
-  <label><input type="checkbox"> Con sangre <span class="alerta">🚨</span></label>
-</div>
-
+<!-- BLOQUE DISNEA -->
 <div class="bloque" id="bloqueDisnea" style="display:none">
-  <h3>Tipo de disnea</h3>
-  <label><input type="checkbox"> De esfuerzo</label><br>
-  <label><input type="checkbox"> En reposo <span class="alerta">🚨</span></label><br>
-  <label><input type="checkbox"> Nocturna (PND)</label><br>
-  <label><input type="checkbox"> Progresiva</label>
-</div>
+  <h3>Disnea</h3>
 
-<div class="bloque">
-  <h3>Factores de riesgo</h3>
-  <label><input type="checkbox"> Fumador</label><br>
-  <label><input type="checkbox"> Contacto TB</label><br>
-  <label><input type="checkbox"> Asma / EPOC</label>
+  <div class="subbloque">
+    <strong>Tipo de disnea</strong><br>
+    <label><input type="checkbox"> De esfuerzo</label><br>
+    <label><input type="checkbox"> En reposo <span class="alerta">🚨</span></label><br>
+    <label><input type="checkbox"> Nocturna (PND)</label><br>
+    <label><input type="checkbox"> Progresiva</label>
+  </div>
 </div>
 
 <script>
@@ -75,16 +84,14 @@ const tos = document.getElementById("tos");
 const disnea = document.getElementById("disnea");
 
 const bloqueTos = document.getElementById("bloqueTos");
-const bloqueTiempoTos = document.getElementById("bloqueTiempoTos");
-const bloqueEsputo = document.getElementById("bloqueEsputo");
 const bloqueDisnea = document.getElementById("bloqueDisnea");
+const bloqueEsputo = document.getElementById("bloqueEsputo");
 
 const productiva = document.getElementById("productiva");
 const seca = document.getElementById("seca");
 
 tos.addEventListener("change", () => {
   bloqueTos.style.display = tos.checked ? "block" : "none";
-  bloqueTiempoTos.style.display = tos.checked ? "block" : "none";
   bloqueEsputo.style.display = "none";
   productiva.checked = false;
   seca.checked = false;
