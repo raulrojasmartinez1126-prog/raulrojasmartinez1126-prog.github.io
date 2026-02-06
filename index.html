@@ -33,7 +33,7 @@ h1 { color: #0b5ed7; }
 
 <h1>Evaluación Clínica Respiratoria</h1>
 
-  <!-- DATOS FILIATORIOS -->
+<!-- DATOS FILIATORIOS -->
 <div class="bloque">
   <h3>Datos filiatorios</h3>
 
@@ -51,13 +51,13 @@ h1 { color: #0b5ed7; }
     <label>Sexo:</label><br>
     <select id="sexo">
       <option value="">-- seleccionar --</option>
-      <option value="masculino">Masculino</option>
-      <option value="femenino">Femenino</option>
+      <option value="Masculino">Masculino</option>
+      <option value="Femenino">Femenino</option>
     </select>
   </div>
 
   <div class="subbloque">
-    <label>Lugar de procedencia:</label><br>
+    <label>Procedencia:</label><br>
     <input type="text" id="procedencia" style="width:300px">
   </div>
 
@@ -67,129 +67,102 @@ h1 { color: #0b5ed7; }
   </div>
 </div>
 
-<!-- MOTIVO DE CONSULTA -->
+<!-- MOTIVO -->
 <div class="bloque">
   <h3>Motivo de consulta</h3>
   <label><input type="checkbox" id="tos"> Tos</label><br>
   <label><input type="checkbox" id="disnea"> Disnea</label>
 </div>
 
-<!-- BLOQUE TOS -->
+<!-- TOS -->
 <div class="bloque" id="bloqueTos" style="display:none">
   <h3>Tos</h3>
 
   <div class="subbloque">
-    <strong>Tipo de tos</strong><br>
-<label><input type="radio" name="tosTipo" id="productiva" value="productiva"> Productiva</label><br>
-<label><input type="radio" name="tosTipo" id="seca" value="seca"> Seca</label>
-
+    <strong>Tipo</strong><br>
+    <label><input type="radio" name="tosTipo" value="productiva"> Productiva</label><br>
+    <label><input type="radio" name="tosTipo" value="seca"> Seca</label>
   </div>
 
   <div class="subbloque">
     <strong>Tiempo de evolución</strong><br>
-    <label><input type="radio" name="tiempoTos"> Aguda (&lt; 3 semanas)</label><br>
-    <label><input type="radio" name="tiempoTos"> Subaguda (3–8 semanas)</label><br>
-    <label><input type="radio" name="tiempoTos"> Crónica (&gt; 8 semanas)</label>
-  </div>
-
-  <div class="subbloque" id="bloqueEsputo" style="display:none">
-    <strong>Color del esputo</strong><br>
-    <label><input type="checkbox"> Blanco</label><br>
-    <label><input type="checkbox"> Amarillo</label><br>
-    <label><input type="checkbox"> Verdoso</label><br>
-    <label><input type="checkbox"> Con sangre <span class="alerta">🚨</span></label>
+    <label><input type="radio" name="tiempoTos" value="aguda"> Aguda (&lt;3 semanas)</label><br>
+    <label><input type="radio" name="tiempoTos" value="subaguda"> Subaguda (3–8 semanas)</label><br>
+    <label><input type="radio" name="tiempoTos" value="cronica"> Crónica (&gt;8 semanas)</label>
   </div>
 </div>
 
-<!-- BLOQUE DISNEA -->
+<!-- DISNEA -->
 <div class="bloque" id="bloqueDisnea" style="display:none">
   <h3>Disnea</h3>
 
   <div class="subbloque">
-    <strong>Tipo de disnea</strong><br>
-    <label><input type="checkbox"> De esfuerzo</label><br>
-    <label><input type="checkbox"> En reposo <span class="alerta">🚨</span></label><br>
-    <label><input type="checkbox"> Nocturna (PND)</label><br>
-    <label><input type="checkbox"> Progresiva</label>
+    <label><input type="checkbox" class="disneaTipo" value="de esfuerzo"> De esfuerzo</label><br>
+    <label><input type="checkbox" class="disneaTipo" value="en reposo"> En reposo 🚨</label><br>
+    <label><input type="checkbox" class="disneaTipo" value="nocturna"> Nocturna (PND)</label><br>
+    <label><input type="checkbox" class="disneaTipo" value="progresiva"> Progresiva</label>
   </div>
 </div>
-  
-<!-- BOTÓN RESUMEN CLÍNICO -->
+
+<!-- BOTÓN -->
 <div class="bloque">
   <button onclick="generarResumen()">🩺 Generar resumen clínico</button>
 </div>
 
-<!-- SALIDA DEL RESUMEN -->
+<!-- RESUMEN -->
 <div class="bloque" id="resumenClinico" style="display:none">
   <h3>Resumen clínico</h3>
   <div id="textoResumen"></div>
 </div>
 
 <script>
-/* ====== ELEMENTOS ====== */
 const tos = document.getElementById("tos");
 const disnea = document.getElementById("disnea");
-
 const bloqueTos = document.getElementById("bloqueTos");
 const bloqueDisnea = document.getElementById("bloqueDisnea");
-const bloqueEsputo = document.getElementById("bloqueEsputo");
-
-const productiva = document.getElementById("productiva");
-const seca = document.getElementById("seca");
-
 const resumenDiv = document.getElementById("resumenClinico");
 const textoResumen = document.getElementById("textoResumen");
 
-/* ====== EVENTOS ====== */
 tos.addEventListener("change", () => {
   bloqueTos.style.display = tos.checked ? "block" : "none";
-  bloqueEsputo.style.display = "none";
-  productiva.checked = false;
-  seca.checked = false;
-});
-
-productiva.addEventListener("change", () => {
-  bloqueEsputo.style.display = "block";
-});
-
-seca.addEventListener("change", () => {
-  bloqueEsputo.style.display = "none";
 });
 
 disnea.addEventListener("change", () => {
   bloqueDisnea.style.display = disnea.checked ? "block" : "none";
 });
 
-/* ====== RESUMEN CLÍNICO ====== */
 function generarResumen() {
-  let resumen = "";
+  let r = "";
 
-  const nombre = document.getElementById("nombre").value;
-  const edad = document.getElementById("edad").value;
-  const sexo = document.getElementById("sexo").value;
-  const procedencia = document.getElementById("procedencia").value;
-  const ocupacion = document.getElementById("ocupacion").value;
+  r += `<strong>Paciente:</strong> ${nombre.value || "No consignado"}<br>`;
+  r += `<strong>Edad:</strong> ${edad.value || "?"} años<br>`;
+  r += `<strong>Sexo:</strong> ${sexo.value || "No consignado"}<br>`;
+  r += `<strong>Procedencia:</strong> ${procedencia.value || "No consignada"}<br>`;
+  r += `<strong>Ocupación:</strong> ${ocupacion.value || "No consignada"}<br><br>`;
 
-  resumen += `<strong>Paciente:</strong> ${nombre || "No consignado"}<br>`;
-  resumen += `<strong>Edad:</strong> ${edad || "No consignada"} años<br>`;
-  resumen += `<strong>Sexo:</strong> ${sexo || "No consignado"}<br>`;
-  resumen += `<strong>Procedencia:</strong> ${procedencia || "No consignada"}<br>`;
-  resumen += `<strong>Ocupación:</strong> ${ocupacion || "No consignada"}<br><br>`;
+  r += `<strong>Motivo de consulta:</strong><br>`;
 
-  resumen += `<strong>Motivo de consulta:</strong><br>`;
+  if (tos.checked) {
+    const tipoTos = document.querySelector('input[name="tosTipo"]:checked');
+    const tiempoTos = document.querySelector('input[name="tiempoTos"]:checked');
 
-  if (tos.checked) resumen += "- Tos<br>";
-  if (disnea.checked) resumen += "- Disnea<br>";
-
-  if (!tos.checked && !disnea.checked) {
-    resumen += "No referido<br>";
+    r += `– Tos`;
+    if (tipoTos) r += ` ${tipoTos.value}`;
+    if (tiempoTos) r += `, ${tiempoTos.value}`;
+    r += `<br>`;
   }
 
-  textoResumen.innerHTML = resumen;
+  if (disnea.checked) {
+    const tipos = [...document.querySelectorAll(".disneaTipo:checked")]
+      .map(e => e.value)
+      .join(", ");
+    r += `– Disnea ${tipos || ""}<br>`;
+  }
+
+  textoResumen.innerHTML = r;
   resumenDiv.style.display = "block";
 }
 </script>
-
 
 </body>
 </html>
