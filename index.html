@@ -33,55 +33,16 @@
 
 <h1>Evaluación Clínica Respiratoria</h1>
 
+<!-- MOTIVO DE CONSULTA -->
 <div class="bloque">
   <h3>Motivo de consulta</h3>
   <label><input type="checkbox" id="tos"> Tos</label><br>
   <label><input type="checkbox" id="disnea"> Disnea</label>
 </div>
 
+<!-- TOS -->
 <div class="bloque oculto" id="bloqueTos">
   <h3>Características de la tos</h3>
   <label><input type="radio" name="tosTipo" onclick="mostrarEsputo()"> Productiva</label><br>
-  <label><input type="radio" name="tosTipo" onclick="ocultarEsputo()"> Seca</label>
-</div>
+  <label><input type="radio" name="tosTipo" onclick="oculta
 
-<div class="bloque oculto" id="bloqueEsputo">
-  <h3>Color del esputo</h3>
-  <label><input type="checkbox"> Blanco</label><br>
-  <label><input type="checkbox"> Amarillo</label><br>
-  <label><input type="checkbox"> Verdoso</label><br>
-  <label><input type="checkbox"> Con sangre</label>
-  <p class="alerta">⚠ Hemoptisis: signo de alarma</p>
-</div>
-
-<div class="bloque">
-  <h3>Factores de riesgo</h3>
-  <label><input type="checkbox"> Fumador</label><br>
-  <label><input type="checkbox"> Contacto TB</label><br>
-  <label><input type="checkbox"> Asma / EPOC</label>
-</div>
-
-<script>
-  const tos = document.getElementById("tos");
-  const bloqueTos = document.getElementById("bloqueTos");
-
-  tos.addEventListener("change", function() {
-    if (this.checked) {
-      bloqueTos.classList.remove("oculto");
-    } else {
-      bloqueTos.classList.add("oculto");
-      ocultarEsputo();
-    }
-  });
-
-  function mostrarEsputo() {
-    document.getElementById("bloqueEsputo").classList.remove("oculto");
-  }
-
-  function ocultarEsputo() {
-    document.getElementById("bloqueEsputo").classList.add("oculto");
-  }
-</script>
-
-</body>
-</html>
