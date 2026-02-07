@@ -99,41 +99,37 @@ Evaluación Clínica Respiratoria
   <input type="text" id="ocupacion">
 </div>
 
-
-  <!-- SÍNTOMAS -->
+sintomas
   <div class="card">
-    <h3>Síntomas</h3>
+  <h3>Síntomas</h3>
 
-    <label>
-      <input type="checkbox" id="dolorToracico" onclick="toggleDolor()">
+  <input
+    type="text"
+    id="buscadorSintomas"
+    placeholder="Buscar síntoma..."
+    onkeyup="filtrarSintomas()"
+  >
+
+  <div id="listaSintomas">
+
+    <label class="item-sintoma">
+      <input type="checkbox" id="disnea">
+      Disnea
+    </label>
+
+    <label class="item-sintoma">
+      <input type="checkbox" id="dolorToracico">
       Dolor torácico
     </label>
 
-    <!-- CARACTERÍSTICAS (OCULTAS) -->
-    <div class="subsection" id="caracteristicasDolor">
+    <label class="item-sintoma">
+      <input type="checkbox" id="tos">
+      Tos
+    </label>
 
-      <label>
-        <input type="checkbox"> Opresivo
-      </label>
-
-      <label>
-        <input type="checkbox"> Quemante
-      </label>
-
-      <label>
-        <input type="checkbox"> Punzante
-      </label>
-
-      <label>
-        <input type="checkbox"> Irradiado
-      </label>
-
-      <label>
-        <input type="checkbox"> Aumenta con la respiración
-      </label>
-
-    </div>
   </div>
+</div>
+
 
   <button>Generar resumen</button>
 
