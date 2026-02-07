@@ -40,7 +40,6 @@ h3 {
 
 label {
   display: block;
-  margin-top: 10px;
 }
 
 input[type="text"],
@@ -63,7 +62,7 @@ button {
   font-size: 16px;
 }
 
-/* ===== SÍNTOMAS EN CUADRITOS ===== */
+/* ===== SÍNTOMAS ===== */
 .sintomas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -84,12 +83,6 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: 0.2s;
-}
-
-.sintoma-card:hover {
-  background: #f0f6ff;
-  border-color: #0d6efd;
 }
 
 .sintoma-card input {
@@ -154,17 +147,17 @@ button {
     <div class="sintomas-grid">
 
       <label class="item-sintoma sintoma-card">
-        <input type="checkbox" id="disnea">
+        <input type="checkbox" onchange="filtrarSintomas()" id="disnea">
         Disnea
       </label>
 
       <label class="item-sintoma sintoma-card">
-        <input type="checkbox" id="dolorToracico" onchange="toggleDolor()">
+        <input type="checkbox" onchange="toggleDolor(); filtrarSintomas()" id="dolorToracico">
         Dolor torácico
       </label>
 
       <label class="item-sintoma sintoma-card">
-        <input type="checkbox" id="tos">
+        <input type="checkbox" onchange="filtrarSintomas()" id="tos">
         Tos
       </label>
 
@@ -212,6 +205,9 @@ function filtrarSintomas() {
     }
   });
 }
+
+// ocultos al cargar
+filtrarSintomas();
 </script>
 
 </body>
