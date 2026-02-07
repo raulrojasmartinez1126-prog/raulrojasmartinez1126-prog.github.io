@@ -199,6 +199,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
+  const dolorToracico = document.getElementById("dolorToracico");
+const bloqueDolor = document.getElementById("bloqueDolor");
+
+dolorToracico.addEventListener("change", () => {
+  bloqueDolor.style.display = dolorToracico.checked ? "block" : "none";
+});
+
 </script>
 
 <div class="bloque">
