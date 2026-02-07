@@ -44,7 +44,8 @@ label {
 }
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+select {
   width: 100%;
   padding: 8px;
   border-radius: 8px;
@@ -53,7 +54,7 @@ input[type="number"] {
 }
 
 .subsection {
-  margin-left: 20px;
+  margin-left: 15px;
   margin-top: 10px;
   display: none;
 }
@@ -72,64 +73,69 @@ button {
 
 <body>
 
-<header>
-Evaluación Clínica Respiratoria
-</header>
+<header>Evaluación Clínica Respiratoria</header>
 
-<div class="card">
-  <h3>Datos del paciente</h3>
+<div class="container">
 
-  <label>Nombre</label>
-  <input type="text" id="nombre">
-
-  <label>Edad</label>
-  <input type="number" id="edad">
-
-  <label>Sexo</label>
-  <select id="sexo">
-    <option value="">Seleccione</option>
-    <option value="Masculino">Masculino</option>
-    <option value="Femenino">Femenino</option>
-  </select>
-  
-   <label>Lugar de procedencia</label>
-  <input type="text" id="lugardeprocedencia">
-
-   <label>Ocupacion</label>
-  <input type="text" id="ocupacion">
-</div>
-
-sintomas
+  <!-- DATOS DEL PACIENTE -->
   <div class="card">
-  <h3>Síntomas</h3>
+    <h3>Datos del paciente</h3>
 
-  <input
-    type="text"
-    id="buscadorSintomas"
-    placeholder="Buscar síntoma..."
-    onkeyup="filtrarSintomas()"
-  >
+    <label>Nombre</label>
+    <input type="text" id="nombre">
 
-  <div id="listaSintomas">
+    <label>Edad</label>
+    <input type="number" id="edad">
 
-    <label class="item-sintoma">
+    <label>Sexo</label>
+    <select id="sexo">
+      <option value="">Seleccione</option>
+      <option>Masculino</option>
+      <option>Femenino</option>
+    </select>
+
+    <label>Lugar de procedencia</label>
+    <input type="text" id="procedencia">
+
+    <label>Ocupación</label>
+    <input type="text" id="ocupacion">
+  </div>
+
+  <!-- SÍNTOMAS -->
+  <div class="card">
+    <h3>Síntomas</h3>
+
+    <input
+      type="text"
+      id="buscadorSintomas"
+      placeholder="Buscar síntoma..."
+      onkeyup="filtrarSintomas()"
+    >
+
+    <label>
       <input type="checkbox" id="disnea">
       Disnea
     </label>
 
-    <label class="item-sintoma">
-      <input type="checkbox" id="dolorToracico">
+    <label>
+      <input type="checkbox" id="dolorToracico" onchange="toggleDolor()">
       Dolor torácico
     </label>
 
-    <label class="item-sintoma">
+    <!-- CARACTERÍSTICAS DEL DOLOR (OCULTAS) -->
+    <div id="caracteristicasDolor" class="subsection">
+      <label><input type="checkbox"> Opresivo 🚨</label>
+      <label><input type="checkbox"> Quemante</label>
+      <label><input type="checkbox"> Punzante</label>
+      <label><input type="checkbox"> Irradiado a brazo/mandíbula 🚨</label>
+    </div>
+
+    <label>
       <input type="checkbox" id="tos">
       Tos
     </label>
 
   </div>
-</div>
-
 
   <button>Generar resumen</button>
 
@@ -139,8 +145,16 @@ sintomas
 function toggleDolor() {
   const check = document.getElementById("dolorToracico");
   const box = document.getElementById("caracteristicasDolor");
-
   box.style.display = check.checked ? "block" : "none";
+}
+
+function filtrarSintomas() {
+  const texto = document.getElementById("buscadorSintomas").value.toLowerCase();
+  document.querySelectorAll(".card label").forEach(label => {
+    label.style.display = label.innerText.toLowerCase().includes(texto)
+      ? "block"
+      : "none";
+  });
 }
 </script>
 
