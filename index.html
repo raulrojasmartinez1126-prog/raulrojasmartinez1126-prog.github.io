@@ -196,9 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (document.getElementById("dolorToracico")?.checked) {
-  r += "- Dolor torácico\n";
-}
-    if (document.getElementById("dolorToracico")?.checked) {
   const tiposDolor = [...document.querySelectorAll(".dolorTipo:checked")]
     .map(e => e.value)
     .join(", ");
