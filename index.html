@@ -19,13 +19,94 @@ body {
 .app {
   max-width: 480px;
   margin: auto;
-  background: #eef2f7;
   min-height: 100vh;
-  padding-bottom: 30px;
+  background: #eef2f7;
 }
 
 .header {
   background: #0b5ed7;
   color: white;
   padding: 16px;
-  text-align: cente
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.card {
+  background: white;
+  margin: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #0b5ed7;
+  font-size: 16px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+label {
+  font-size: 14px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.check {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.alerta {
+  color: red;
+  font-weight: bold;
+}
+
+button {
+  width: calc(100% - 24px);
+  margin: 12px;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #0b5ed7;
+  color: white;
+  font-size: 16px;
+}
+
+pre {
+  white-space: pre-wrap;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+    Evaluación Clínica Respiratoria
+  </div>
+
+  <!-- DATOS DEL PACIENTE -->
+  <div class="card">
+    <h3>Datos del paciente</h3>
+
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="nombre">
+    </div>
+
+    <div class="field">
+      <label>Edad</label>
