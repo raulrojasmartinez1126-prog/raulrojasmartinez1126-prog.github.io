@@ -194,6 +194,10 @@ document.addEventListener("DOMContentLoaded", () => {
       r += "\n";
     }
 
+    if (document.getElementById("dolorToracico")?.checked) {
+  r += "- Dolor torácico\n";
+}
+
     document.getElementById("textoResumen").textContent = r;
     document.getElementById("resumenClinico").style.display = "block";
   });
