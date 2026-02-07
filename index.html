@@ -3,110 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evaluación Clínica Respiratoria</title>
+
+<title>Evaluación Clínica</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
-  font-family: system-ui, Arial, sans-serif;
-  background: #eef2f7;
+  font-family: Arial, sans-serif;
+  background: #f2f5f9;
 }
 
-.app {
-  max-width: 480px;
-  margin: auto;
-  min-height: 100vh;
-  background: #eef2f7;
-}
-
-.header {
-  background: #0b5ed7;
+header {
+  background: #0d6efd;
   color: white;
-  padding: 16px;
+  padding: 15px;
   text-align: center;
   font-size: 18px;
-  font-weight: bold;
+}
+
+.container {
+  padding: 15px;
 }
 
 .card {
   background: white;
-  margin: 12px;
-  padding: 14px;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
-.card h3 {
+h3 {
   margin-top: 0;
-  color: #0b5ed7;
-  font-size: 16px;
-}
-
-.field {
-  margin-bottom: 12px;
+  color: #0d6efd;
 }
 
 label {
-  font-size: 14px;
+  display: block;
+  margin-top: 10px;
 }
 
 input[type="text"],
-input[type="number"],
-select {
+input[type="number"] {
   width: 100%;
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
+  margin-top: 5px;
 }
 
-.check {
-  display: block;
-  margin-bottom: 8px;
-}
-
-.alerta {
-  color: red;
-  font-weight: bold;
+.subsection {
+  margin-left: 20px;
+  margin-top: 10px;
+  display: none;
 }
 
 button {
-  width: calc(100% - 24px);
-  margin: 12px;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  background: #0b5ed7;
+  width: 100%;
+  padding: 12px;
+  background: #0d6efd;
   color: white;
+  border: none;
+  border-radius: 10px;
   font-size: 16px;
-}
-
-pre {
-  white-space: pre-wrap;
-  font-size: 14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<header>
+Evaluación Clínica Respiratoria
+</header>
 
-  <div class="header">
-    Evaluación Clínica Respiratoria
-  </div>
+<div class="container">
 
   <!-- DATOS DEL PACIENTE -->
   <div class="card">
     <h3>Datos del paciente</h3>
 
-    <div class="field">
-      <label>Nombre</label>
-      <input type="text" id="nombre">
-    </div>
+    <label>Nombre</label>
+    <input type="text">
 
-    <div class="field">
-      <label>Edad</label>
+    <label>Edad</label>
+    <input type="number">
+  </div>
+
+  <!-- SÍNTOMAS -->
+  <div class="card">
+    <h3>Síntomas</h3>
+
+    <label>
+      <input type="checkbox" id="dolorToracico" onclick="toggleDolor()">
+      Dolor torácico
+    </label>
+
+    <!-- CARACTERÍSTICAS (OCULTAS) -->
+    <div class="subsection" id="caracteristicasDolor">
+
+      <label>
+        <input type="checkbox"> Opresivo
+      </label>
+
+      <label>
+        <input type="checkbox"> Quemante
+      </label>
+
+      <label>
+        <input type="checkbox"> Punzante
+      </label>
+
+      <label>
+        <input type="checkbox"> Irradiado
+      </label>
+
+      <label>
+        <input type="checkbox"> Aumenta con la respiración
+      </label>
+
+    </div>
+  </div>
+
+  <button>Generar resumen</button>
+
+</div>
+
+<script>
+function toggleDolor() {
+  const check = document.getElementById("dolorToracico");
+  const box = document.getElementById("caracteristicasDolor");
+
+  box.style.display = check.checked ? "block" : "none";
+}
+</script>
+
+</body>
+</html>
