@@ -53,12 +53,6 @@ select {
   margin-top: 5px;
 }
 
-.subsection {
-  margin-left: 15px;
-  margin-top: 10px;
-  display: none;
-}
-
 button {
   width: 100%;
   padding: 12px;
@@ -67,6 +61,17 @@ button {
   border: none;
   border-radius: 10px;
   font-size: 16px;
+}
+
+/* ===== SÍNTOMAS ===== */
+.item-sintoma {
+  display: none;
+}
+
+.subsection {
+  margin-left: 15px;
+  margin-top: 10px;
+  display: none;
 }
 </style>
 </head>
@@ -112,17 +117,16 @@ button {
       onkeyup="filtrarSintomas()"
     >
 
-    <label>
+    <label class="item-sintoma">
       <input type="checkbox" id="disnea">
       Disnea
     </label>
 
-    <label>
+    <label class="item-sintoma">
       <input type="checkbox" id="dolorToracico" onchange="toggleDolor()">
       Dolor torácico
     </label>
 
-    <!-- CARACTERÍSTICAS DEL DOLOR (OCULTAS) -->
     <div id="caracteristicasDolor" class="subsection">
       <label><input type="checkbox"> Opresivo 🚨</label>
       <label><input type="checkbox"> Quemante</label>
@@ -130,11 +134,10 @@ button {
       <label><input type="checkbox"> Irradiado a brazo/mandíbula 🚨</label>
     </div>
 
-    <label>
+    <label class="item-sintoma">
       <input type="checkbox" id="tos">
       Tos
     </label>
-
   </div>
 
   <button>Generar resumen</button>
@@ -150,10 +153,19 @@ function toggleDolor() {
 
 function filtrarSintomas() {
   const texto = document.getElementById("buscadorSintomas").value.toLowerCase();
-  document.querySelectorAll(".card label").forEach(label => {
-    label.style.display = label.innerText.toLowerCase().includes(texto)
-      ? "block"
-      : "none";
+  const sintomas = document.querySelectorAll(".item-sintoma");
+
+  sintomas.forEach(sintoma => {
+    const checkbox = sintoma.querySelector("input");
+    const nombre = sintoma.innerText.toLowerCase();
+
+    if (checkbox.checked) {
+      sintoma.style.display = "block";
+    } else if (texto && nombre.includes(texto)) {
+      sintoma.style.display = "block";
+    } else {
+      sintoma.style.display = "none";
+    }
   });
 }
 </script>
