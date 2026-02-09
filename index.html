@@ -151,11 +151,10 @@ button {
     <input
       type="text"
       id="buscadorSintomas"
-      placeholder="Escribe una letra..."
+      placeholder="Escribe cualquier letra..."
     >
 
     <div id="listaResultados" class="lista-resultados"></div>
-
     <div id="resultadosCIE" class="sintomas-grid"></div>
   </div>
 
@@ -164,7 +163,20 @@ button {
 </div>
 
 <script>
-// --- Funciones de normalización para ignorar tildes y mayúsculas ---
+// --- JSON reducido de ejemplo ---
+const CIE11 = [
+  {"titulo":"Fiebre de otro origen o de origen desconocido","codigo":"MG26"},
+  {"titulo":"Fiebre Q","codigo":"1C33"},
+  {"titulo":"Fiebre mediterránea familiar","codigo":"4A60.0"},
+  {"titulo":"Dolor de cabeza","codigo":"MG10"},
+  {"titulo":"Dolor abdominal","codigo":"MG11"},
+  {"titulo":"Tos productiva","codigo":"RB34"},
+  {"titulo":"Tos seca","codigo":"RB35"},
+  {"titulo":"Paludismo sin confirmación parasitológica","codigo":"1F45"},
+  {"titulo":"Leptospirosis","codigo":"1B91"}
+];
+
+// --- Función de normalización ---
 function normalizar(texto) {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
@@ -173,66 +185,51 @@ const input = document.getElementById("buscadorSintomas");
 const lista = document.getElementById("listaResultados");
 const contenedor = document.getElementById("resultadosCIE");
 
-input.addEventListener("input", async function() {
+input.addEventListener("input", function() {
   const texto = this.value.trim();
   lista.innerHTML = "";
   if (texto.length === 0) return;
 
-  try {
-    // --- IMPORTANTE: reemplaza la IP por la de tu PC en tu red ---
-    const respuesta = await fetch(`http://192.168.0.100:3000/buscar?q=${encodeURIComponent(texto)}`);
-    let datos = await respuesta.json();
+  const textoNorm = normalizar(texto);
 
-    const textoNorm = normalizar(texto);
+  const empieza = [];
+  const contiene = [];
 
-    // --- Filtrado y orden inteligente ---
-    const empieza = [];
-    const contiene = [];
-
-    datos.forEach(item => {
-      const tituloNorm = normalizar(item.titulo);
-      if (tituloNorm.includes(textoNorm)) {
-        if (tituloNorm.indexOf(textoNorm) === 0) {
-          empieza.push(item);
-        } else {
-          contiene.push(item);
-        }
+  CIE11.forEach(item => {
+    const tituloNorm = normalizar(item.titulo);
+    if (tituloNorm.includes(textoNorm)) {
+      if (tituloNorm.indexOf(textoNorm) === 0) {
+        empieza.push(item);
+      } else {
+        contiene.push(item);
       }
-    });
+    }
+  });
 
-    const resultadosOrdenados = [...empieza, ...contiene];
+  const resultadosOrdenados = [...empieza, ...contiene];
 
-    resultadosOrdenados.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "item-resultado";
-      div.textContent = `${item.titulo} (${item.codigo})`;
+  resultadosOrdenados.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item-resultado";
+    div.textContent = `${item.titulo} (${item.codigo})`;
 
-      const seleccionar = () => {
-        agregarSintoma(item);
-        lista.innerHTML = "";
-        input.value = "";
-      };
+    const seleccionar = () => {
+      agregarSintoma(item);
+      lista.innerHTML = "";
+      input.value = "";
+    };
 
-      div.onclick = seleccionar;
-      div.ontouchstart = seleccionar;
+    div.onclick = seleccionar;
+    div.ontouchstart = seleccionar;
 
-      lista.appendChild(div);
-    });
-
-  } catch (error) {
-    console.error("Error conectando con backend:", error);
-  }
+    lista.appendChild(div);
+  });
 });
 
 function agregarSintoma(item) {
   const label = document.createElement("label");
   label.className = "sintoma-card";
-
-  label.innerHTML = `
-    <input type="checkbox" checked>
-    ${item.titulo} (${item.codigo})
-  `;
-
+  label.innerHTML = `<input type="checkbox" checked> ${item.titulo} (${item.codigo})`;
   contenedor.appendChild(label);
 }
 </script>
