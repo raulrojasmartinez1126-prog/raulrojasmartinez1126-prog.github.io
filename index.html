@@ -164,36 +164,42 @@ button {
 </div>
 
 <script>
+// --- Funciones de normalización para ignorar tildes y mayúsculas ---
+function normalizar(texto) {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 const input = document.getElementById("buscadorSintomas");
 const lista = document.getElementById("listaResultados");
 const contenedor = document.getElementById("resultadosCIE");
 
 input.addEventListener("input", async function() {
   const texto = this.value.trim();
-
   lista.innerHTML = "";
-
-  if (texto.length === 0) return; // no buscamos si el input está vacío
+  if (texto.length === 0) return;
 
   try {
     const respuesta = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(texto)}`);
     let datos = await respuesta.json();
 
-    // --- Ordenar resultados: los que empiezan con el texto primero ---
-    const textoLower = texto.toLowerCase();
-    datos.sort((a, b) => {
-      const aTitulo = a.titulo.toLowerCase();
-      const bTitulo = b.titulo.toLowerCase();
+    const textoNorm = normalizar(texto);
 
-      const aEmpieza = aTitulo.startsWith(textoLower) ? 0 : 1;
-      const bEmpieza = bTitulo.startsWith(textoLower) ? 0 : 1;
-
-      if (aEmpieza !== bEmpieza) return aEmpieza - bEmpieza;
-
-      return aTitulo.localeCompare(bTitulo);
-    });
+    // --- Filtrado y orden inteligente ---
+    const empieza = [];
+    const contiene = [];
 
     datos.forEach(item => {
+      const tituloNorm = normalizar(item.titulo);
+      if (tituloNorm.startsWith(textoNorm)) {
+        empieza.push(item);
+      } else if (tituloNorm.includes(textoNorm)) {
+        contiene.push(item);
+      }
+    });
+
+    const resultadosOrdenados = [...empieza, ...contiene];
+
+    resultadosOrdenados.forEach(item => {
       const div = document.createElement("div");
       div.className = "item-resultado";
       div.textContent = `${item.titulo} (${item.codigo})`;
@@ -205,7 +211,7 @@ input.addEventListener("input", async function() {
       };
 
       div.onclick = seleccionar;
-      div.ontouchstart = seleccionar; // soporte táctil móvil
+      div.ontouchstart = seleccionar;
 
       lista.appendChild(div);
     });
