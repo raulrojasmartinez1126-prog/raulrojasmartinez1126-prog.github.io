@@ -38,10 +38,6 @@ h3 {
   color: #0d6efd;
 }
 
-label {
-  display: block;
-}
-
 input[type="text"],
 input[type="number"],
 select {
@@ -60,18 +56,15 @@ button {
   border: none;
   border-radius: 10px;
   font-size: 16px;
+  margin-top: 15px;
 }
 
-/* ===== SÍNTOMAS ===== */
+/* GRID SINTOMAS */
 .sintomas-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 10px;
-  margin-top: 10px;
-}
-
-.item-sintoma {
-  display: none;
+  margin-top: 15px;
 }
 
 .sintoma-card {
@@ -83,22 +76,16 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: 0.2s;
+}
+
+.sintoma-card:hover {
+  background: #f0f6ff;
+  border-color: #0d6efd;
 }
 
 .sintoma-card input {
   transform: scale(1.2);
-}
-
-/* ===== SUBSECCIÓN ===== */
-.subsection {
-  margin-top: 12px;
-  display: none;
-}
-
-.sub-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 8px;
 }
 </style>
 </head>
@@ -133,48 +120,18 @@ button {
     <input type="text" id="ocupacion">
   </div>
 
-  <!-- SÍNTOMAS -->
+  <!-- BUSCADOR CIE-11 -->
   <div class="card">
-    <h3>Síntomas</h3>
+    <h3>Buscar síntoma (CIE-11)</h3>
 
     <input
       type="text"
       id="buscadorSintomas"
-      placeholder="Buscar síntoma..."
-      onkeyup="filtrarSintomas()"
+      placeholder="Escribe mínimo 3 letras..."
+      onkeyup="buscarCIE11()"
     >
 
-    <div class="sintomas-grid">
-
-      <label class="item-sintoma sintoma-card">
-        <input type="checkbox" onchange="filtrarSintomas()" id="disnea">
-        Disnea
-      </label>
-
-      <label class="item-sintoma sintoma-card">
-        <input type="checkbox" onchange="toggleDolor(); filtrarSintomas()" id="dolorToracico">
-        Dolor torácico
-      </label>
-
-      <label class="item-sintoma sintoma-card">
-        <input type="checkbox" onchange="filtrarSintomas()" id="tos">
-        Tos
-      </label>
-
-    </div>
-
-    <!-- CARACTERÍSTICAS DEL DOLOR -->
-    <div id="caracteristicasDolor" class="subsection">
-      <h4>Características del dolor</h4>
-
-      <div class="sub-grid">
-        <label class="sintoma-card"><input type="checkbox"> Opresivo 🚨</label>
-        <label class="sintoma-card"><input type="checkbox"> Quemante</label>
-        <label class="sintoma-card"><input type="checkbox"> Punzante</label>
-        <label class="sintoma-card"><input type="checkbox"> Irradiado a brazo/mandíbula 🚨</label>
-      </div>
-    </div>
-
+    <div id="resultadosCIE" class="sintomas-grid"></div>
   </div>
 
   <button>Generar resumen</button>
@@ -182,32 +139,40 @@ button {
 </div>
 
 <script>
-function toggleDolor() {
-  const check = document.getElementById("dolorToracico");
-  const box = document.getElementById("caracteristicasDolor");
-  box.style.display = check.checked ? "block" : "none";
+async function buscarCIE11() {
+  const texto = document.getElementById("buscadorSintomas").value;
+
+  if (texto.length < 3) {
+    document.getElementById("resultadosCIE").innerHTML = "";
+    return;
+  }
+
+  try {
+    const respuesta = await fetch(
+      "http://localhost:3000/buscar?q=" + texto
+    );
+
+    const datos = await respuesta.json();
+
+    const contenedor = document.getElementById("resultadosCIE");
+    contenedor.innerHTML = "";
+
+    datos.forEach(item => {
+      const label = document.createElement("label");
+      label.className = "sintoma-card";
+
+      label.innerHTML = `
+        <input type="checkbox">
+        ${item.titulo} (${item.codigo})
+      `;
+
+      contenedor.appendChild(label);
+    });
+
+  } catch (error) {
+    console.error("Error conectando con backend:", error);
+  }
 }
-
-function filtrarSintomas() {
-  const texto = document.getElementById("buscadorSintomas").value.toLowerCase();
-  const sintomas = document.querySelectorAll(".item-sintoma");
-
-  sintomas.forEach(sintoma => {
-    const checkbox = sintoma.querySelector("input");
-    const nombre = sintoma.innerText.toLowerCase();
-
-    if (checkbox.checked) {
-      sintoma.style.display = "flex";
-    } else if (texto && nombre.includes(texto)) {
-      sintoma.style.display = "flex";
-    } else {
-      sintoma.style.display = "none";
-    }
-  });
-}
-
-// ocultos al cargar
-filtrarSintomas();
 </script>
 
 </body>
