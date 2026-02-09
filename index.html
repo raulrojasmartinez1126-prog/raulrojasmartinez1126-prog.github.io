@@ -157,7 +157,6 @@ button {
         type="text"
         id="buscadorSintomas"
         placeholder="Escribe mínimo 3 letras..."
-        onkeyup="buscarCIE11()"
       >
 
       <div id="listaResultados" class="lista-resultados"></div>
@@ -171,43 +170,52 @@ button {
 </div>
 
 <script>
-async function buscarCIE11() {
-  const texto = document.getElementById("buscadorSintomas").value;
-  const lista = document.getElementById("listaResultados");
+/* --- Función para autocompletado dinámico del CIE-11 --- */
+const input = document.getElementById("buscadorSintomas");
+const lista = document.getElementById("listaResultados");
 
-  if (texto.length < 3) {
-    lista.innerHTML = "";
-    return;
-  }
+input.addEventListener("input", async function() {
+  const texto = this.value.trim().toLowerCase();
+  lista.innerHTML = "";
+
+  if (texto.length < 3) return; // mínimo 3 letras
 
   try {
+    // Llamada a la API consultiva del CIE-11 (idioma español)
     const respuesta = await fetch(
-      "http://localhost:3000/buscar?q=" + texto
+      `https://id.who.int/icd/entity/search?q=${encodeURIComponent(texto)}&language=es`,
+      { headers: { "Accept": "application/json" } }
     );
 
     const datos = await respuesta.json();
 
-    lista.innerHTML = "";
+    if (!datos?.items || datos.items.length === 0) return;
 
-    datos.forEach(item => {
+    // Tomamos máximo 10 resultados
+    const resultados = datos.items.slice(0, 10).map(item => ({
+      titulo: item.prefLabel || item.label,
+      codigo: item.code || item.id
+    }));
+
+    // Creamos la lista desplegable
+    resultados.forEach(item => {
       const div = document.createElement("div");
       div.className = "item-resultado";
-      div.innerText = item.titulo + " (" + item.codigo + ")";
-
-      div.onclick = function() {
-        agregarSintoma(item);
-        lista.innerHTML = "";
-        document.getElementById("buscadorSintomas").value = "";
+      div.innerText = `${item.titulo} (${item.codigo})`;
+      div.onclick = () => {
+        agregarSintoma(item);        // agrega al grid
+        lista.innerHTML = "";        // limpia la lista
+        input.value = "";             // limpia el input
       };
-
       lista.appendChild(div);
     });
 
   } catch (error) {
-    console.error("Error conectando con backend:", error);
+    console.error("Error conectando con la API del CIE-11:", error);
   }
-}
+});
 
+/* --- Función existente para agregar síntoma al grid --- */
 function agregarSintoma(item) {
   const contenedor = document.getElementById("resultadosCIE");
 
