@@ -50,7 +50,7 @@ button { width:100%; padding:12px; background:#0d6efd; color:white; border:none;
 
   <div class="card">
     <h3>Buscar síntoma (CIE-11)</h3>
-    <input type="text" id="buscadorSintomas" placeholder="Escribe una letra...">
+    <input type="text" id="buscadorSintomas" placeholder="Escribe cualquier letra...">
     <div id="listaResultados" class="lista-resultados"></div>
     <div id="resultadosCIE" class="sintomas-grid"></div>
   </div>
@@ -60,6 +60,7 @@ button { width:100%; padding:12px; background:#0d6efd; color:white; border:none;
 </div>
 
 <script>
+// --- Normalización de texto ---
 function normalizar(texto) {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
@@ -68,16 +69,30 @@ const input = document.getElementById("buscadorSintomas");
 const lista = document.getElementById("listaResultados");
 const contenedor = document.getElementById("resultadosCIE");
 
+// --- Detectar IP automáticamente ---
+async function obtenerIP() {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json');
+    const data = await res.json();
+    return data.ip; // devuelve la IP pública, para local en LAN cambiar por tu IP privada
+  } catch (e) {
+    console.warn("No se pudo obtener IP automáticamente, usar localhost");
+    return 'localhost';
+  }
+}
+
+// --- Buscar CIE-11 en backend ---
 input.addEventListener("input", async function() {
   const texto = this.value.trim();
   lista.innerHTML = "";
   if (texto.length === 0) return;
 
+  const textoNorm = normalizar(texto);
+  const ip = await obtenerIP(); // puede ser localhost o tu IP
+
   try {
-    // Cambia localhost por la IP de tu PC si pruebas en móvil
-    const respuesta = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(texto)}`);
+    const respuesta = await fetch(`http://${ip}:3000/buscar?q=${encodeURIComponent(texto)}`);
     const datos = await respuesta.json();
-    const textoNorm = normalizar(texto);
 
     const empieza = [];
     const contiene = [];
@@ -85,11 +100,8 @@ input.addEventListener("input", async function() {
     datos.forEach(item => {
       const tituloNorm = normalizar(item.titulo);
       if (tituloNorm.includes(textoNorm)) {
-        if (tituloNorm.indexOf(textoNorm) === 0) {
-          empieza.push(item);
-        } else {
-          contiene.push(item);
-        }
+        if (tituloNorm.indexOf(textoNorm) === 0) empieza.push(item);
+        else contiene.push(item);
       }
     });
 
