@@ -31,8 +31,6 @@ header {
   padding: 15px;
   margin-bottom: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  position: relative; /* necesario para autocompletado móvil */
-  z-index: 1;
 }
 
 h3 {
@@ -90,17 +88,16 @@ button {
   transform: scale(1.2);
 }
 
-/* LISTA AUTOCOMPLETADO */
+/* LISTA AUTOCOMPLETADO MÓVILES Y ESCRITORIO */
 .lista-resultados {
-  position: absolute;
   width: 100%;
   background: white;
   border: 1px solid #ccc;
   border-radius: 8px;
   margin-top: 5px;
-  max-height: 250px; /* mayor altura para móviles */
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch; /* scroll suave en iOS */
+  max-height: 250px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   z-index: 1000;
 }
@@ -154,7 +151,7 @@ button {
     <input
       type="text"
       id="buscadorSintomas"
-      placeholder="Escribe mínimo 3 letras..."
+      placeholder="Escribe una letra..."
     >
 
     <div id="listaResultados" class="lista-resultados"></div>
@@ -167,7 +164,6 @@ button {
 </div>
 
 <script>
-// --- Función para autocompletado dinámico con backend ---
 const input = document.getElementById("buscadorSintomas");
 const lista = document.getElementById("listaResultados");
 const contenedor = document.getElementById("resultadosCIE");
@@ -177,7 +173,7 @@ input.addEventListener("input", async function() {
 
   lista.innerHTML = "";
 
-  if (texto.length < 3) return;
+  if (texto.length === 0) return; // no buscamos si el input está vacío
 
   try {
     const respuesta = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(texto)}`);
@@ -205,7 +201,6 @@ input.addEventListener("input", async function() {
   }
 });
 
-// --- Función para agregar síntoma al grid ---
 function agregarSintoma(item) {
   const label = document.createElement("label");
   label.className = "sintoma-card";
