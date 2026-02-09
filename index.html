@@ -177,7 +177,21 @@ input.addEventListener("input", async function() {
 
   try {
     const respuesta = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(texto)}`);
-    const datos = await respuesta.json();
+    let datos = await respuesta.json();
+
+    // --- Ordenar resultados: los que empiezan con el texto primero ---
+    const textoLower = texto.toLowerCase();
+    datos.sort((a, b) => {
+      const aTitulo = a.titulo.toLowerCase();
+      const bTitulo = b.titulo.toLowerCase();
+
+      const aEmpieza = aTitulo.startsWith(textoLower) ? 0 : 1;
+      const bEmpieza = bTitulo.startsWith(textoLower) ? 0 : 1;
+
+      if (aEmpieza !== bEmpieza) return aEmpieza - bEmpieza;
+
+      return aTitulo.localeCompare(bTitulo);
+    });
 
     datos.forEach(item => {
       const div = document.createElement("div");
