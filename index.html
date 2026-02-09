@@ -2,177 +2,108 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Evaluación Clínica</title>
+<title>Buscador CIE-11</title>
 
 <style>
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
-  background: #f2f5f9;
+  background: #f4f6f8;
+  padding: 40px;
 }
 
-header {
-  background: #0d6efd;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-size: 18px;
+h1 {
+  color: #0b5ed7;
 }
 
-.container {
-  padding: 15px;
+.buscador-container {
+  position: relative;
+  width: 400px;
 }
 
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-h3 {
-  margin-top: 0;
-  color: #0d6efd;
-}
-
-input[type="text"],
-input[type="number"],
-select {
+input {
   width: 100%;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-top: 5px;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  background: #0d6efd;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  margin-top: 15px;
-}
-
-/* GRID SINTOMAS */
-.sintomas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.sintoma-card {
-  border: 1.5px solid #d0d7de;
-  border-radius: 10px;
   padding: 10px;
-  background: #fff;
+  font-size: 16px;
+}
+
+.resultados {
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 250px;
+  overflow-y: auto;
+  display: none;
+  z-index: 1000;
+}
+
+.resultado-item {
+  padding: 10px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: 0.2s;
 }
 
-.sintoma-card:hover {
-  background: #f0f6ff;
-  border-color: #0d6efd;
+.resultado-item:hover {
+  background: #e9ecef;
 }
 
-.sintoma-card input {
-  transform: scale(1.2);
+.seleccionado {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border: 1px solid #ccc;
 }
 </style>
 </head>
 
 <body>
 
-<header>Evaluación Clínica Respiratoria</header>
+<h1>Buscador CIE-11</h1>
 
-<div class="container">
+<div class="buscador-container">
+  <input type="text" id="busqueda" placeholder="Escribe un diagnóstico...">
+  <div id="resultados" class="resultados"></div>
+</div>
 
-  <!-- DATOS DEL PACIENTE -->
-  <div class="card">
-    <h3>Datos del paciente</h3>
-
-    <label>Nombre</label>
-    <input type="text" id="nombre">
-
-    <label>Edad</label>
-    <input type="number" id="edad">
-
-    <label>Sexo</label>
-    <select id="sexo">
-      <option value="">Seleccione</option>
-      <option>Masculino</option>
-      <option>Femenino</option>
-    </select>
-
-    <label>Lugar de procedencia</label>
-    <input type="text" id="procedencia">
-
-    <label>Ocupación</label>
-    <input type="text" id="ocupacion">
-  </div>
-
-  <!-- BUSCADOR CIE-11 -->
-  <div class="card">
-    <h3>Buscar síntoma (CIE-11)</h3>
-
-    <input
-      type="text"
-      id="buscadorSintomas"
-      placeholder="Escribe mínimo 3 letras..."
-      onkeyup="buscarCIE11()"
-    >
-
-    <div id="resultadosCIE" class="sintomas-grid"></div>
-  </div>
-
-  <button>Generar resumen</button>
-
+<div id="seleccionado" class="seleccionado">
+  Aquí aparecerá el diagnóstico seleccionado
 </div>
 
 <script>
-async function buscarCIE11() {
-  const texto = document.getElementById("buscadorSintomas").value;
+const input = document.getElementById("busqueda");
+const resultadosDiv = document.getElementById("resultados");
+const seleccionadoDiv = document.getElementById("seleccionado");
 
-  if (texto.length < 3) {
-    document.getElementById("resultadosCIE").innerHTML = "";
+input.addEventListener("input", async () => {
+  const texto = input.value;
+
+  if (texto.length < 2) {
+    resultadosDiv.style.display = "none";
     return;
   }
 
-  try {
-    const respuesta = await fetch(
-      "http://localhost:3000/buscar?q=" + texto
-    );
+  const response = await fetch("http://localhost:3000/search?q=" + texto);
+  const data = await response.json();
 
-    const datos = await respuesta.json();
+  resultadosDiv.innerHTML = "";
 
-    const contenedor = document.getElementById("resultadosCIE");
-    contenedor.innerHTML = "";
+  data.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "resultado-item";
+    div.innerText = item.titulo + " | Código: " + item.codigo;
 
-    datos.forEach(item => {
-      const label = document.createElement("label");
-      label.className = "sintoma-card";
+    div.addEventListener("click", () => {
+      seleccionadoDiv.innerHTML =
+        "<strong>" + item.titulo + "</strong><br>Código: " + item.codigo;
 
-      label.innerHTML = `
-        <input type="checkbox">
-        ${item.titulo} (${item.codigo})
-      `;
-
-      contenedor.appendChild(label);
+      resultadosDiv.style.display = "none";
+      input.value = item.titulo;
     });
 
-  } catch (error) {
-    console.error("Error conectando con backend:", error);
-  }
-}
+    resultadosDiv.appendChild(div);
+  });
+
+  resultadosDiv.style.display = "block";
+});
 </script>
 
 </body>
