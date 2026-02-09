@@ -179,7 +179,8 @@ input.addEventListener("input", async function() {
   if (texto.length === 0) return;
 
   try {
-    const respuesta = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(texto)}`);
+    // --- IMPORTANTE: reemplaza la IP por la de tu PC en tu red ---
+    const respuesta = await fetch(`http://192.168.0.100:3000/buscar?q=${encodeURIComponent(texto)}`);
     let datos = await respuesta.json();
 
     const textoNorm = normalizar(texto);
@@ -190,10 +191,12 @@ input.addEventListener("input", async function() {
 
     datos.forEach(item => {
       const tituloNorm = normalizar(item.titulo);
-      if (tituloNorm.startsWith(textoNorm)) {
-        empieza.push(item);
-      } else if (tituloNorm.includes(textoNorm)) {
-        contiene.push(item);
+      if (tituloNorm.includes(textoNorm)) {
+        if (tituloNorm.indexOf(textoNorm) === 0) {
+          empieza.push(item);
+        } else {
+          contiene.push(item);
+        }
       }
     });
 
