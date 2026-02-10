@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evaluación Clínica Integral</title>
+
+<title>Evaluación Clínica</title>
 
 <style>
 body { margin:0; font-family: Arial,sans-serif; background:#f2f5f9; }
@@ -12,12 +13,12 @@ header { background:#0d6efd; color:white; padding:15px; text-align:center; font-
 .card { background:white; border-radius:12px; padding:15px; margin-bottom:15px; box-shadow:0 4px 10px rgba(0,0,0,0.08);}
 h3 { margin-top:0; color:#0d6efd; }
 
-input, select {
+input[type="text"], input[type="number"], select {
   width:100%;
   padding:8px;
   border-radius:8px;
   border:1px solid #ccc;
-  margin-top:8px;
+  margin-top:5px;
 }
 
 button {
@@ -31,91 +32,193 @@ button {
   margin-top:15px;
 }
 
-.grid {
+.sintomas-grid {
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
   gap:10px;
-  margin-top:10px;
+  margin-top:15px;
 }
 
-.card-item {
+.sintoma-card {
   border:1.5px solid #d0d7de;
   border-radius:10px;
   padding:10px;
   background:#fff;
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:0.2s;
 }
 
-.card-item.activo {
+.sintoma-card:hover {
+  background:#f0f6ff;
+  border-color:#0d6efd;
+}
+
+.sintoma-card input { display:none; }
+
+.sintoma-card.seleccionado {
   background:#e7f1ff;
   border-color:#0d6efd;
   font-weight:600;
 }
 
-.lista {
+.sintoma-card.seleccionado input {
+  display:inline-block;
+  transform:scale(1.2);
+}
+
+.lista-resultados {
+  width:100%;
   background:white;
   border:1px solid #ccc;
   border-radius:8px;
   margin-top:5px;
   max-height:220px;
   overflow-y:auto;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-.item {
+.item-resultado {
   padding:8px;
   cursor:pointer;
   border-bottom:1px solid #eee;
 }
-.item:hover { background:#f0f6ff; }
+
+.item-resultado:hover {
+  background:#f0f6ff;
+}
 </style>
 </head>
 
 <body>
 
-<header>Evaluación Clínica Integral</header>
+<header>Evaluación Clínica Respiratoria</header>
 
 <div class="container">
 
-<div class="card">
-<h3>Datos del paciente</h3>
-<input placeholder="Nombre">
-<input type="number" placeholder="Edad">
-<select>
-<option value="">Sexo</option>
-<option>Masculino</option>
-<option>Femenino</option>
-</select>
-</div>
+  <div class="card">
+    <h3>Datos del paciente</h3>
+    <input type="text" placeholder="Nombre">
+    <input type="number" placeholder="Edad">
+    <select>
+      <option value="">Sexo</option>
+      <option>Masculino</option>
+      <option>Femenino</option>
+    </select>
+  </div>
 
-<div class="card">
-<h3>Síntomas (CIE-11)</h3>
-<input id="buscadorCIE" placeholder="Ej: dolor, disnea, mareo">
-<div id="listaCIE" class="lista"></div>
-<div id="seleccionCIE" class="grid"></div>
-</div>
+  <!-- 🔵 BUSCADOR CIE -->
+  <div class="card">
+    <h3>Buscar síntoma (CIE-11)</h3>
+    <input type="text" id="buscadorSintomas" placeholder="Ej: tos, disnea...">
+    <div id="listaResultados" class="lista-resultados"></div>
+    <div id="resultadosCIE" class="sintomas-grid"></div>
+  </div>
 
-<div class="card">
-<h3>Signos clínicos</h3>
-<input id="buscadorSignos" placeholder="Ej: nistagmo, atrofia">
-<div id="listaSignos" class="lista"></div>
-<div id="seleccionSignos" class="grid"></div>
-</div>
+  <!-- 🟢 BUSCADOR SIGNOS -->
+  <div class="card">
+    <h3>Buscar signos clínicos</h3>
+    <input type="text" id="buscadorSignos" placeholder="Ej: sibilancias, crépitos...">
+    <div id="listaSignos" class="lista-resultados"></div>
+    <div id="resultadosSignos" class="sintomas-grid"></div>
+  </div>
 
-<button onclick="generarResumen()">Generar resumen</button>
-
+  <button>Generar resumen</button>
 </div>
 
 <script>
-// ======= UTIL =======
-const norm = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-
-function guardar(clave, datos){
-  localStorage.setItem(clave, JSON.stringify(datos));
-}
-function cargar(clave){
-  return JSON.parse(localStorage.getItem(clave) || "[]");
+// ================= UTIL =================
+function normalizar(t) {
+  return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-// ======= CIE FALLBACK (si backend no responde) =======
-const cieLocal = [
- {codigo:"MB11.0", titulo:"Dol
+// ================= CIE =================
+const inputCIE = document.getElementById("buscadorSintomas");
+const listaCIE = document.getElementById("listaResultados");
+const contCIE = document.getElementById("resultadosCIE");
+
+inputCIE.addEventListener("input", async function() {
+  const q = this.value.trim();
+  listaCIE.innerHTML = "";
+  if (!q) return;
+
+  const res = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(q)}`);
+  const datos = await res.json();
+
+  datos.forEach(item => {
+    const d = document.createElement("div");
+    d.className = "item-resultado";
+    d.textContent = `${item.titulo} (${item.codigo})`;
+    d.onclick = () => {
+      agregarItem(contCIE, item.titulo + " (" + item.codigo + ")");
+      listaCIE.innerHTML = "";
+      inputCIE.value = "";
+    };
+    listaCIE.appendChild(d);
+  });
+});
+
+// ================= SIGNOS =================
+const signos = [
+  "Sibilancias",
+  "Crépitantes",
+  "Roncus",
+  "Disminución del murmullo vesicular",
+  "Tiraje intercostal",
+  "Uso de músculos accesorios",
+  "Matidez a la percusión",
+  "Hipersonoridad",
+  "Cianosis",
+  "Taquipnea",
+  "Aleteo nasal"
+];
+
+const inputSignos = document.getElementById("buscadorSignos");
+const listaSignos = document.getElementById("listaSignos");
+const contSignos = document.getElementById("resultadosSignos");
+
+inputSignos.addEventListener("input", function() {
+  const q = normalizar(this.value);
+  listaSignos.innerHTML = "";
+  if (!q) return;
+
+  signos
+    .filter(s => normalizar(s).includes(q))
+    .forEach(s => {
+      const d = document.createElement("div");
+      d.className = "item-resultado";
+      d.textContent = s;
+      d.onclick = () => {
+        agregarItem(contSignos, s);
+        listaSignos.innerHTML = "";
+        inputSignos.value = "";
+      };
+      listaSignos.appendChild(d);
+    });
+});
+
+// ================= AGREGAR =================
+function agregarItem(contenedor, texto) {
+  const label = document.createElement("label");
+  label.className = "sintoma-card seleccionado";
+
+  const check = document.createElement("input");
+  check.type = "checkbox";
+  check.checked = true;
+
+  label.appendChild(check);
+  label.append(" " + texto);
+
+  label.onclick = () => {
+    check.checked = !check.checked;
+    label.classList.toggle("seleccionado", check.checked);
+  };
+
+  contenedor.appendChild(label);
+}
+</script>
+
+</body>
+</html>
