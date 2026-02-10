@@ -2,100 +2,194 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Evaluación Clínica</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  padding: 20px;
+body { margin:0; font-family: Arial,sans-serif; background:#f2f5f9; }
+header { background:#0d6efd; color:white; padding:15px; text-align:center; font-size:18px; }
+.container { padding:15px; }
+.card { background:white; border-radius:12px; padding:15px; margin-bottom:15px; box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+h3 { margin-top:0; color:#0d6efd; }
+
+input[type="text"], input[type="number"], select {
+  width:100%;
+  padding:8px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  margin-top:5px;
 }
 
-h2 {
-  color: #0b5ed7;
+button {
+  width:100%;
+  padding:12px;
+  background:#0d6efd;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  margin-top:15px;
 }
 
-.buscador {
-  width: 100%;
-  padding: 10px;
-  font-size: 15px;
-  margin-bottom: 10px;
+.sintomas-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:10px;
+  margin-top:15px;
 }
 
-.lista {
-  background: white;
-  border-radius: 8px;
-  padding: 10px;
-  max-height: 300px;
-  overflow-y: auto;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.sintoma-card {
+  border:1.5px solid #d0d7de;
+  border-radius:10px;
+  padding:10px;
+  background:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:0.2s;
 }
 
-.item {
-  padding: 8px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 5px;
+.sintoma-card:hover {
+  background:#f0f6ff;
+  border-color:#0d6efd;
 }
 
-.item:hover {
-  background: #e9f1ff;
+/* 🔑 CLAVE: checkbox oculto */
+.sintoma-card input {
+  display:none;
 }
 
-.item.activo {
-  background: #0d6efd;
-  color: white;
+/* 🔑 cuando está seleccionado */
+.sintoma-card.seleccionado {
+  background:#e7f1ff;
+  border-color:#0d6efd;
+  font-weight:600;
+}
+
+.sintoma-card.seleccionado input {
+  display:inline-block;
+  transform:scale(1.2);
+}
+
+.lista-resultados {
+  width:100%;
+  background:white;
+  border:1px solid #ccc;
+  border-radius:8px;
+  margin-top:5px;
+  max-height:250px;
+  overflow-y:auto;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  z-index:1000;
+}
+
+.item-resultado {
+  padding:8px;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+}
+
+.item-resultado:hover {
+  background:#f0f6ff;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Signos clínicos</h2>
+<header>Evaluación Clínica Respiratoria</header>
 
-<input 
-  type="text" 
-  class="buscador" 
-  placeholder="Buscar signo clínico..."
-  onkeyup="filtrarSignos()"
->
+<div class="container">
 
-<div class="lista" id="listaSignos">
+  <div class="card">
+    <h3>Datos del paciente</h3>
+    <label>Nombre</label>
+    <input type="text">
+    <label>Edad</label>
+    <input type="number">
+    <label>Sexo</label>
+    <select>
+      <option value="">Seleccione</option>
+      <option>Masculino</option>
+      <option>Femenino</option>
+    </select>
+    <label>Lugar de procedencia</label>
+    <input type="text">
+    <label>Ocupación</label>
+    <input type="text">
+  </div>
 
-  <div class="item">Taquipnea</div>
-  <div class="item">Bradipnea</div>
-  <div class="item">Cianosis</div>
-  <div class="item">Uso de músculos accesorios</div>
-  <div class="item">Aleteo nasal</div>
-  <div class="item">Hipoxemia</div>
-  <div class="item">Fiebre</div>
-  <div class="item">Hipotensión</div>
-  <div class="item">Hipertensión</div>
-  <div class="item">Taquicardia</div>
-  <div class="item">Bradicardia</div>
-  <div class="item">Edema periférico</div>
-  <div class="item">Ingurgitación yugular</div>
-  <div class="item">Palidez</div>
-  <div class="item">Diaforesis</div>
+  <div class="card">
+    <h3>Buscar síntoma (CIE-11)</h3>
+    <input type="text" id="buscadorSintomas" placeholder="Escribe una letra...">
+    <div id="listaResultados" class="lista-resultados"></div>
+    <div id="resultadosCIE" class="sintomas-grid"></div>
+  </div>
+
+  <button>Generar resumen</button>
 
 </div>
 
 <script>
-const items = document.querySelectorAll(".item");
+function normalizar(texto) {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
 
-items.forEach(item => {
-  item.addEventListener("click", () => {
-    item.classList.toggle("activo");
-  });
+const input = document.getElementById("buscadorSintomas");
+const lista = document.getElementById("listaResultados");
+const contenedor = document.getElementById("resultadosCIE");
+
+input.addEventListener("input", async function() {
+  const texto = this.value.trim();
+  lista.innerHTML = "";
+  if (!texto) return;
+
+  try {
+    const respuesta = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(texto)}`);
+    const datos = await respuesta.json();
+
+    const textoNorm = normalizar(texto);
+
+    datos
+      .filter(i => normalizar(i.titulo).includes(textoNorm))
+      .forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item-resultado";
+        div.textContent = `${item.titulo} (${item.codigo})`;
+
+        div.onclick = () => {
+          agregarSintoma(item);
+          lista.innerHTML = "";
+          input.value = "";
+        };
+
+        lista.appendChild(div);
+      });
+
+  } catch (e) {
+    console.error("Error backend:", e);
+  }
 });
 
-function filtrarSignos() {
-  const filtro = document.querySelector(".buscador").value.toLowerCase();
-  items.forEach(item => {
-    item.style.display = item.textContent.toLowerCase().includes(filtro)
-      ? "block"
-      : "none";
-  });
+function agregarSintoma(item) {
+  const label = document.createElement("label");
+  label.className = "sintoma-card seleccionado";
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = true;
+
+  label.appendChild(checkbox);
+  label.append(` ${item.titulo} (${item.codigo})`);
+
+  label.onclick = () => {
+    checkbox.checked = !checkbox.checked;
+    label.classList.toggle("seleccionado", checkbox.checked);
+  };
+
+  contenedor.appendChild(label);
 }
 </script>
 
