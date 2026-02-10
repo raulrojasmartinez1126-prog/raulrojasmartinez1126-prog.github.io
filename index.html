@@ -2,211 +2,100 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Evaluación Clínica</title>
 
 <style>
-body { margin:0; font-family: Arial,sans-serif; background:#f2f5f9; }
-header { background:#0d6efd; color:white; padding:15px; text-align:center; font-size:18px; }
-.container { padding:15px; }
-.card { background:white; border-radius:12px; padding:15px; margin-bottom:15px; box-shadow:0 4px 10px rgba(0,0,0,0.08);}
-h3 { margin-top:0; color:#0d6efd; }
-
-input[type="text"], input[type="number"], select {
-  width:100%; padding:8px; border-radius:8px;
-  border:1px solid #ccc; margin-top:5px;
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  padding: 20px;
 }
 
-button {
-  width:100%; padding:12px; background:#0d6efd;
-  color:white; border:none; border-radius:10px;
-  font-size:16px; margin-top:15px;
+h2 {
+  color: #0b5ed7;
 }
 
-.sintomas-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:10px; margin-top:15px;
+.buscador {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  margin-bottom: 10px;
 }
 
-.sintoma-card {
-  border:1.5px solid #d0d7de;
-  border-radius:10px;
-  padding:10px;
-  background:#fff;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  transition:0.2s;
+.lista {
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.sintoma-card:hover {
-  background:#f0f6ff;
-  border-color:#0d6efd;
+.item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 5px;
 }
 
-.sintoma-card input { transform:scale(1.2); }
+.item:hover {
+  background: #e9f1ff;
+}
 
-.lista-resultados {
-  width:100%;
-  background:white;
-  border:1px solid #ccc;
-  border-radius:8px;
-  margin-top:5px;
-  max-height:250px;
-  overflow-y:auto;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+.item.activo {
+  background: #0d6efd;
+  color: white;
 }
-.item-resultado {
-  padding:8px;
-  cursor:pointer;
-  border-bottom:1px solid #eee;
-}
-.item-resultado:hover { background:#f0f6ff; }
 </style>
 </head>
 
 <body>
 
-<header>Evaluación Clínica Respiratoria</header>
+<h2>Signos clínicos</h2>
 
-<div class="container">
+<input 
+  type="text" 
+  class="buscador" 
+  placeholder="Buscar signo clínico..."
+  onkeyup="filtrarSignos()"
+>
 
-  <!-- DATOS DEL PACIENTE -->
-  <div class="card">
-    <h3>Datos del paciente</h3>
-    <label>Nombre</label>
-    <input type="text">
-    <label>Edad</label>
-    <input type="number">
-    <label>Sexo</label>
-    <select>
-      <option value="">Seleccione</option>
-      <option>Masculino</option>
-      <option>Femenino</option>
-    </select>
-    <label>Procedencia</label>
-    <input type="text">
-    <label>Ocupación</label>
-    <input type="text">
-  </div>
+<div class="lista" id="listaSignos">
 
-  <!-- SÍNTOMAS CIE -->
-  <div class="card">
-    <h3>🗣️ Buscar SÍNTOMAS (CIE-11)</h3>
-    <input type="text" id="buscadorSintomas" placeholder="Escribe una letra...">
-    <div id="listaResultados" class="lista-resultados"></div>
-    <div id="resultadosCIE" class="sintomas-grid"></div>
-  </div>
-
-  <!-- SIGNOS CLÍNICOS -->
-  <div class="card">
-    <h3>🩺 Buscar SIGNOS clínicos (exploración)</h3>
-
-    <input
-      type="text"
-      id="buscadorSignos"
-      placeholder="Buscar signo (ej: sibilancias, estertores...)"
-      oninput="filtrarSignos()"
-    >
-
-    <div id="listaSignos" class="sintomas-grid">
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Sibilancias
-      </label>
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Estertores
-      </label>
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Roncus
-      </label>
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Murmullo vesicular disminuido
-      </label>
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Uso de músculos accesorios
-      </label>
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Tiraje intercostal
-      </label>
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Taquipnea
-      </label>
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Cianosis
-      </label>
-
-      <label class="sintoma-card">
-        <input type="checkbox"> Hipoventilación
-      </label>
-
-    </div>
-  </div>
-
-  <button>Generar resumen</button>
+  <div class="item">Taquipnea</div>
+  <div class="item">Bradipnea</div>
+  <div class="item">Cianosis</div>
+  <div class="item">Uso de músculos accesorios</div>
+  <div class="item">Aleteo nasal</div>
+  <div class="item">Hipoxemia</div>
+  <div class="item">Fiebre</div>
+  <div class="item">Hipotensión</div>
+  <div class="item">Hipertensión</div>
+  <div class="item">Taquicardia</div>
+  <div class="item">Bradicardia</div>
+  <div class="item">Edema periférico</div>
+  <div class="item">Ingurgitación yugular</div>
+  <div class="item">Palidez</div>
+  <div class="item">Diaforesis</div>
 
 </div>
 
 <script>
-function normalizar(texto) {
-  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-}
+const items = document.querySelectorAll(".item");
 
-/* ========= BUSCADOR DE SIGNOS ========= */
-function filtrarSignos() {
-  const texto = normalizar(document.getElementById("buscadorSignos").value);
-  const signos = document.getElementById("listaSignos").getElementsByTagName("label");
-
-  for (let i = 0; i < signos.length; i++) {
-    const contenido = normalizar(signos[i].innerText);
-    signos[i].style.display = contenido.includes(texto) ? "flex" : "none";
-  }
-}
-
-/* ========= BUSCADOR CIE (BACKEND) ========= */
-const input = document.getElementById("buscadorSintomas");
-const lista = document.getElementById("listaResultados");
-const contenedor = document.getElementById("resultadosCIE");
-
-input.addEventListener("input", async function() {
-  const texto = this.value.trim();
-  lista.innerHTML = "";
-  if (!texto) return;
-
-  try {
-    const res = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(texto)}`);
-    const datos = await res.json();
-    const textoNorm = normalizar(texto);
-
-    datos.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "item-resultado";
-      div.textContent = `${item.titulo} (${item.codigo})`;
-      div.onclick = () => agregarSintoma(item);
-      lista.appendChild(div);
-    });
-  } catch (e) {
-    console.error(e);
-  }
+items.forEach(item => {
+  item.addEventListener("click", () => {
+    item.classList.toggle("activo");
+  });
 });
 
-function agregarSintoma(item) {
-  const label = document.createElement("label");
-  label.className = "sintoma-card";
-  label.innerHTML = `<input type="checkbox" checked> ${item.titulo} (${item.codigo})`;
-  contenedor.appendChild(label);
-  lista.innerHTML = "";
-  input.value = "";
+function filtrarSignos() {
+  const filtro = document.querySelector(".buscador").value.toLowerCase();
+  items.forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(filtro)
+      ? "block"
+      : "none";
+  });
 }
 </script>
 
