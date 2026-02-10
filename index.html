@@ -13,12 +13,12 @@ header { background:#0d6efd; color:white; padding:15px; text-align:center; font-
 .card { background:white; border-radius:12px; padding:15px; margin-bottom:15px; box-shadow:0 4px 10px rgba(0,0,0,0.08);}
 h3 { margin-top:0; color:#0d6efd; }
 
-input[type="text"], input[type="number"], select {
+input[type="text"], input[type="number"], select, textarea {
   width:100%;
   padding:8px;
   border-radius:8px;
   border:1px solid #ccc;
-  margin-top:5px;
+  margin-top:8px;
 }
 
 button {
@@ -30,6 +30,7 @@ button {
   border-radius:10px;
   font-size:16px;
   margin-top:15px;
+  cursor:pointer;
 }
 
 .sintomas-grid {
@@ -48,15 +49,7 @@ button {
   display:flex;
   align-items:center;
   gap:8px;
-  transition:0.2s;
 }
-
-.sintoma-card:hover {
-  background:#f0f6ff;
-  border-color:#0d6efd;
-}
-
-.sintoma-card input { display:none; }
 
 .sintoma-card.seleccionado {
   background:#e7f1ff;
@@ -64,10 +57,7 @@ button {
   font-weight:600;
 }
 
-.sintoma-card.seleccionado input {
-  display:inline-block;
-  transform:scale(1.2);
-}
+.sintoma-card input { display:none; }
 
 .lista-resultados {
   width:100%;
@@ -77,7 +67,6 @@ button {
   margin-top:5px;
   max-height:220px;
   overflow-y:auto;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
 .item-resultado {
@@ -86,15 +75,13 @@ button {
   border-bottom:1px solid #eee;
 }
 
-.item-resultado:hover {
-  background:#f0f6ff;
-}
+.item-resultado:hover { background:#f0f6ff; }
 </style>
 </head>
 
 <body>
 
-<header>Evaluación Clínica Respiratoria</header>
+<header>Evaluación Clínica General</header>
 
 <div class="container">
 
@@ -102,13 +89,15 @@ button {
     <h3>Datos del paciente</h3>
     <input type="text" id="nombre" placeholder="Nombre">
     <input type="number" id="edad" placeholder="Edad">
+
     <select id="sexo">
       <option value="">Sexo</option>
       <option>Masculino</option>
       <option>Femenino</option>
-      <input type="text" id="ocupacion" placeholder="Ocupacion">
-    <input type="text" id="lugardeprocedencia" placeholder="Lugar de procedencia">
     </select>
+
+    <input type="text" id="ocupacion" placeholder="Ocupación">
+    <input type="text" id="procedencia" placeholder="Lugar de procedencia">
   </div>
 
   <div class="card">
@@ -120,15 +109,14 @@ button {
 
   <div class="card">
     <h3>Buscar signos clínicos</h3>
-    <input type="text" id="buscadorSignos" placeholder="Ej: sibilancias, crépitos...">
+    <input type="text" id="buscadorSignos" placeholder="Ej: nistagmo, atrofia...">
     <div id="listaSignos" class="lista-resultados"></div>
     <div id="resultadosSignos" class="sintomas-grid"></div>
   </div>
 
-  <!-- ✅ RESUMEN -->
   <div class="card">
     <h3>Resumen clínico</h3>
-    <textarea id="resumenClinico" rows="10" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ccc;" placeholder="Aquí se generará el resumen clínico..."></textarea>
+    <textarea id="resumenClinico" rows="10" placeholder="Aquí se generará el resumen clínico..."></textarea>
   </div>
 
   <button onclick="generarResumen()">Generar resumen</button>
@@ -139,156 +127,27 @@ function normalizar(t) {
   return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-/* ===== CIE ===== */
-const inputCIE = document.getElementById("buscadorSintomas");
-const listaCIE = document.getElementById("listaResultados");
-const contCIE = document.getElementById("resultadosCIE");
-
-inputCIE.addEventListener("input", async function() {
-  const q = this.value.trim();
-  listaCIE.innerHTML = "";
-  if (!q) return;
-
-  const res = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(q)}`);
-  const datos = await res.json();
-
-  datos.forEach(item => {
-    const d = document.createElement("div");
-    d.className = "item-resultado";
-    d.textContent = `${item.titulo} (${item.codigo})`;
-    d.onclick = () => {
-      agregarItem(contCIE, `${item.titulo} (${item.codigo})`);
-      listaCIE.innerHTML = "";
-      inputCIE.value = "";
-    };
-    listaCIE.appendChild(d);
-  });
-});
-
-/* ===== SIGNOS CLÍNICOS GENERALES (AMPLIADO) ===== */
+/* ===== SIGNOS CLÍNICOS ===== */
 const signos = [
-  "Fiebre",
-  "Hipotermia",
-  "Escalofríos",
-  "Diaforesis",
-  "Palidez",
-  "Cianosis",
-  "Ictericia",
-  "Rubor",
-  "Hipocratismo digital",
-  "Atrofia muscular",
-  "Hipertrofia muscular",
-  "Caquexia",
-  "Obesidad",
-  "Desnutrición",
-  "Taquicardia",
-  "Bradicardia",
-  "Arritmia",
-  "Pulso irregular",
-  "Pulso filiforme",
-  "Hipotensión",
-  "Hipertensión",
-  "Taquipnea",
-  "Bradipnea",
-  "Apnea",
-  "Disnea",
-  "Ortopnea",
-  "Platipnea",
-  "Uso de músculos accesorios",
-  "Tiraje intercostal",
-  "Aleteo nasal",
-  "Sibilancias",
-  "Crépitantes",
-  "Roncus",
-  "Estertores",
-  "Disminución del murmullo vesicular",
-  "Silencio auscultatorio",
-  "Matidez a la percusión",
-  "Hipersonoridad",
-  "Dolor torácico",
-  "Edema periférico",
-  "Edema generalizado",
-  "Ingurgitación yugular",
-  "Llenado capilar prolongado",
-  "Cefalea",
-  "Nistagmo",
-  "Midriasis",
-  "Miosis",
-  "Anisocoria",
-  "Ptosis palpebral",
-  "Estrabismo",
-  "Diplopía",
-  "Fotofobia",
-  "Ataxia",
-  "Temblor",
-  "Corea",
-  "Distonía",
-  "Rigidez",
-  "Espasticidad",
-  "Hipotonía",
-  "Hipertonía",
-  "Parálisis",
-  "Paresia",
-  "Hemiparesia",
-  "Hemiplejia",
-  "Cuadriparesia",
-  "Cuadriplejia",
-  "Déficit motor",
-  "Déficit sensitivo",
-  "Parestesias",
-  "Hiperreflexia",
-  "Hiporreflexia",
-  "Babinski positivo",
-  "Clonus",
-  "Convulsiones",
-  "Síncope",
-  "Marcha atáxica",
-  "Marcha espástica",
-  "Marcha parkinsoniana",
-  "Bradicinesia",
-  "Hipocinesia",
-  "Discinesia",
-  "Facies hipocrática",
-  "Facies cushingoide",
-  "Facies mixedematosa",
-  "Bocio",
-  "Exoftalmos",
-  "Adenopatías",
-  "Hepatomegalia",
-  "Esplenomegalia",
-  "Ascitis",
-  "Distensión abdominal",
-  "Defensa abdominal",
-  "Rigidez abdominal",
-  "Ileo paralítico",
-  "Globo vesical",
-  "Oliguria",
-  "Anuria",
-  "Hematuria",
-  "Ictericia colestásica",
-  "Petequias",
-  "Equimosis",
-  "Hematomas",
-  "Púrpura",
-  "Exantema",
-  "Eritema",
-  "Prurito",
-  "Úlceras cutáneas",
-  "Alopecia",
-  "Uñas en cuchara",
-  "Uñas frágiles",
-  "Dolor articular",
-  "Tumefacción articular",
-  "Deformidad articular",
-  "Rigidez matutina",
-
+  "Fiebre","Hipotermia","Escalofríos","Diaforesis","Palidez","Cianosis","Ictericia","Rubor",
+  "Hipocratismo digital","Atrofia muscular","Hipertrofia muscular","Caquexia","Obesidad","Desnutrición",
+  "Taquicardia","Bradicardia","Arritmia","Pulso irregular","Hipotensión","Hipertensión",
+  "Taquipnea","Bradipnea","Apnea","Disnea","Ortopnea","Platipnea","Uso de músculos accesorios",
+  "Sibilancias","Crépitantes","Roncus","Silencio auscultatorio","Matidez a la percusión","Hipersonoridad",
+  "Edema periférico","Ingurgitación yugular","Cefalea","Nistagmo","Midriasis","Miosis","Anisocoria",
+  "Ptosis palpebral","Diplopía","Ataxia","Temblor","Rigidez","Espasticidad","Hipotonía","Hipertonía",
+  "Paresia","Parálisis","Déficit motor","Déficit sensitivo","Parestesias","Convulsiones","Síncope",
+  "Bocio","Exoftalmos","Adenopatías","Hepatomegalia","Esplenomegalia","Ascitis",
+  "Petequias","Equimosis","Exantema","Prurito","Alopecia","Dolor articular","Rigidez matutina",
+  "Fatiga","Astenia","Pérdida de peso","Aumento de peso"
+];
 
 const inputSignos = document.getElementById("buscadorSignos");
 const listaSignos = document.getElementById("listaSignos");
 const contSignos = document.getElementById("resultadosSignos");
 
-inputSignos.addEventListener("input", function() {
-  const q = normalizar(this.value);
+inputSignos.addEventListener("input", () => {
+  const q = normalizar(inputSignos.value);
   listaSignos.innerHTML = "";
   if (!q) return;
 
@@ -296,65 +155,47 @@ inputSignos.addEventListener("input", function() {
     const d = document.createElement("div");
     d.className = "item-resultado";
     d.textContent = s;
-    d.onclick = () => {
-      agregarItem(contSignos, s);
-      listaSignos.innerHTML = "";
-      inputSignos.value = "";
-    };
+    d.onclick = () => agregarItem(contSignos, s);
     listaSignos.appendChild(d);
   });
 });
 
-/* ===== AGREGAR ITEM ===== */
 function agregarItem(contenedor, texto) {
   const label = document.createElement("label");
   label.className = "sintoma-card seleccionado";
-
   const check = document.createElement("input");
   check.type = "checkbox";
   check.checked = true;
-
   label.appendChild(check);
   label.append(" " + texto);
-
   label.onclick = () => {
     check.checked = !check.checked;
     label.classList.toggle("seleccionado", check.checked);
   };
-
   contenedor.appendChild(label);
 }
 
-/* ===== RESUMEN ===== */
 function generarResumen() {
-  const nombre = document.getElementById("nombre").value;
-  const edad = document.getElementById("edad").value;
-  const sexo = document.getElementById("sexo").value;
-
-  const sintomas = [...document.querySelectorAll("#resultadosCIE .seleccionado")]
-    .map(e => e.textContent.trim());
+  const nombre = nombreInput();
+  const edad = document.getElementById("edad").value || "N/E";
+  const sexo = document.getElementById("sexo").value || "N/E";
 
   const signosSel = [...document.querySelectorAll("#resultadosSignos .seleccionado")]
     .map(e => e.textContent.trim());
 
-  let texto = "";
-  texto += `Paciente ${nombre || "NN"}, ${edad || "N/E"} años, sexo ${sexo || "N/E"}.\n\n`;
-
-  if (sintomas.length) {
-    texto += "Síntomas referidos:\n";
-    sintomas.forEach(s => texto += `- ${s}\n`);
-    texto += "\n";
-  }
+  let texto = `Paciente ${nombre}, ${edad} años, sexo ${sexo}.\n\n`;
 
   if (signosSel.length) {
     texto += "Signos clínicos:\n";
     signosSel.forEach(s => texto += `- ${s}\n`);
-    texto += "\n";
   }
 
-  texto += "Evaluación clínica orientada a patología respiratoria. Correlacionar con examen físico completo y estudios complementarios según criterio médico.";
-
+  texto += "\nEvaluación clínica orientativa. Correlacionar con examen físico completo y estudios complementarios según criterio médico.";
   document.getElementById("resumenClinico").value = texto;
+}
+
+function nombreInput() {
+  return document.getElementById("nombre").value || "NN";
 }
 </script>
 
