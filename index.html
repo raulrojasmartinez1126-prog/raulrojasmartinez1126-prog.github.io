@@ -125,7 +125,13 @@ button {
     <div id="resultadosSignos" class="sintomas-grid"></div>
   </div>
 
-  <button>Generar resumen</button>
+  <!-- ✅ RESUMEN -->
+  <div class="card">
+    <h3>Resumen clínico</h3>
+    <textarea id="resumenClinico" rows="10" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ccc;" placeholder="Aquí se generará el resumen clínico..."></textarea>
+  </div>
+
+  <button onclick="generarResumen()">Generar resumen</button>
 </div>
 
 <script>
@@ -217,6 +223,42 @@ function agregarItem(contenedor, texto) {
   };
 
   contenedor.appendChild(label);
+}
+
+// ================= RESUMEN =================
+function generarResumen() {
+  // Datos del paciente
+  const nombre = document.querySelector("input[placeholder='Nombre']").value || "NN";
+  const edad = document.querySelector("input[placeholder='Edad']").value || "N/E";
+  const sexo = document.querySelector("select").value || "N/E";
+
+  // Síntomas seleccionados
+  const sintomas = [...document.querySelectorAll("#resultadosCIE .seleccionado")]
+    .map(e => e.textContent.trim());
+
+  // Signos seleccionados
+  const signosSel = [...document.querySelectorAll("#resultadosSignos .seleccionado")]
+    .map(e => e.textContent.trim());
+
+  // Construir texto
+  let texto = `Paciente ${nombre}, ${edad} años, sexo ${sexo}.\n\n`;
+
+  if (sintomas.length) {
+    texto += "Síntomas referidos:\n";
+    sintomas.forEach(s => texto += `- ${s}\n`);
+    texto += "\n";
+  }
+
+  if (signosSel.length) {
+    texto += "Signos clínicos:\n";
+    signosSel.forEach(s => texto += `- ${s}\n`);
+    texto += "\n";
+  }
+
+  texto += "Evaluación clínica orientada a patología respiratoria. Correlacionar con examen físico completo y estudios complementarios según criterio médico.";
+
+  // Mostrar en textarea
+  document.getElementById("resumenClinico").value = texto;
 }
 </script>
 
