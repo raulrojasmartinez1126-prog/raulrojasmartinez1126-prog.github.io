@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Evaluación Clínica</title>
 
 <style>
@@ -13,7 +12,7 @@ header { background:#0d6efd; color:white; padding:15px; text-align:center; font-
 .card { background:white; border-radius:12px; padding:15px; margin-bottom:15px; box-shadow:0 4px 10px rgba(0,0,0,0.08);}
 h3 { margin-top:0; color:#0d6efd; }
 
-input[type="text"], input[type="number"], select {
+input[type="text"], input[type="number"], select, input[type="date"] {
   width:100%;
   padding:8px;
   border-radius:8px;
@@ -98,15 +97,28 @@ button {
 
 <div class="container">
 
+  <!-- 🔹 DATOS DEL PACIENTE AGRUPADOS -->
   <div class="card">
     <h3>Datos del paciente</h3>
-    <input type="text" placeholder="Nombre">
-    <input type="number" placeholder="Edad">
-    <select>
-      <option value="">Sexo</option>
-      <option>Masculino</option>
-      <option>Femenino</option>
-    </select>
+    
+    <!-- Fila 1: Nombre, Fecha Nac, Sexo -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <input type="text" placeholder="Nombre completo" id="nombrePaciente" style="flex:2;">
+      <input type="date" id="fechaNacimiento" style="flex:1;">
+      <select id="sexoPaciente" style="flex:1;">
+        <option value="">Sexo</option>
+        <option>Masculino</option>
+        <option>Femenino</option>
+        <option>Otro</option>
+      </select>
+    </div>
+
+    <!-- Fila 2: Historia clínica, Dirección, Teléfono -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+      <input type="text" placeholder="Historia clínica" id="historiaClinica" style="flex:1;">
+      <input type="text" placeholder="Dirección / Localidad" id="direccionPaciente" style="flex:2;">
+      <input type="text" placeholder="Teléfono / Contacto" id="telefonoPaciente" style="flex:1;">
+    </div>
   </div>
 
   <!-- 🔵 BUSCADOR CIE -->
@@ -150,7 +162,7 @@ inputCIE.addEventListener("input", async function() {
   listaCIE.innerHTML = "";
   if (!q) return;
 
-  const res = await fetch(`http://localhost:3000/buscar?q=${encodeURIComponent(q)}`);
+  const res = await fetch(`/buscar?q=${encodeURIComponent(q)}`);
   const datos = await res.json();
 
   datos.forEach(item => {
@@ -227,21 +239,27 @@ function agregarItem(contenedor, texto) {
 
 // ================= RESUMEN =================
 function generarResumen() {
-  // Datos del paciente
-  const nombre = document.querySelector("input[placeholder='Nombre']").value || "NN";
-  const edad = document.querySelector("input[placeholder='Edad']").value || "N/E";
-  const sexo = document.querySelector("select").value || "N/E";
+  const nombre = document.getElementById("nombrePaciente").value || "NN";
 
-  // Síntomas seleccionados
+  const fechaNac = document.getElementById("fechaNacimiento").value;
+  let edad = "N/E";
+  if (fechaNac) {
+    const diff = new Date() - new Date(fechaNac);
+    edad = Math.floor(diff / (1000 * 60 * 60 * 24 * 365)) + " años";
+  }
+
+  const sexo = document.getElementById("sexoPaciente").value || "N/E";
+  const historiaClinica = document.getElementById("historiaClinica").value || "N/E";
+  const direccion = document.getElementById("direccionPaciente").value || "N/E";
+  const telefono = document.getElementById("telefonoPaciente").value || "N/E";
+
   const sintomas = [...document.querySelectorAll("#resultadosCIE .seleccionado")]
     .map(e => e.textContent.trim());
 
-  // Signos seleccionados
   const signosSel = [...document.querySelectorAll("#resultadosSignos .seleccionado")]
     .map(e => e.textContent.trim());
 
-  // Construir texto
-  let texto = `Paciente ${nombre}, ${edad} años, sexo ${sexo}.\n\n`;
+  let texto = `Paciente ${nombre}, ${edad}, sexo ${sexo}.\nHistoria clínica: ${historiaClinica}\nDirección: ${direccion}\nContacto: ${telefono}\n\n`;
 
   if (sintomas.length) {
     texto += "Síntomas referidos:\n";
@@ -257,7 +275,6 @@ function generarResumen() {
 
   texto += "Evaluación clínica orientada a patología respiratoria. Correlacionar con examen físico completo y estudios complementarios según criterio médico.";
 
-  // Mostrar en textarea
   document.getElementById("resumenClinico").value = texto;
 }
 </script>
