@@ -100,16 +100,15 @@ button {
 
   <div class="card">
     <h3>Datos del paciente</h3>
-    <input type="text" placeholder="Nombre">
-    <input type="number" placeholder="Edad">
-    <select>
+    <input type="text" id="nombre" placeholder="Nombre">
+    <input type="number" id="edad" placeholder="Edad">
+    <select id="sexo">
       <option value="">Sexo</option>
       <option>Masculino</option>
       <option>Femenino</option>
     </select>
   </div>
 
-  <!-- 🔵 BUSCADOR CIE -->
   <div class="card">
     <h3>Buscar síntoma (CIE-11)</h3>
     <input type="text" id="buscadorSintomas" placeholder="Ej: tos, disnea...">
@@ -117,7 +116,6 @@ button {
     <div id="resultadosCIE" class="sintomas-grid"></div>
   </div>
 
-  <!-- 🟢 BUSCADOR SIGNOS -->
   <div class="card">
     <h3>Buscar signos clínicos</h3>
     <input type="text" id="buscadorSignos" placeholder="Ej: sibilancias, crépitos...">
@@ -125,16 +123,21 @@ button {
     <div id="resultadosSignos" class="sintomas-grid"></div>
   </div>
 
-  <button>Generar resumen</button>
+  <!-- ✅ RESUMEN -->
+  <div class="card">
+    <h3>Resumen clínico</h3>
+    <textarea id="resumenClinico" rows="10" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ccc;" placeholder="Aquí se generará el resumen clínico..."></textarea>
+  </div>
+
+  <button onclick="generarResumen()">Generar resumen</button>
 </div>
 
 <script>
-// ================= UTIL =================
 function normalizar(t) {
   return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-// ================= CIE =================
+/* ===== CIE ===== */
 const inputCIE = document.getElementById("buscadorSintomas");
 const listaCIE = document.getElementById("listaResultados");
 const contCIE = document.getElementById("resultadosCIE");
@@ -152,7 +155,7 @@ inputCIE.addEventListener("input", async function() {
     d.className = "item-resultado";
     d.textContent = `${item.titulo} (${item.codigo})`;
     d.onclick = () => {
-      agregarItem(contCIE, item.titulo + " (" + item.codigo + ")");
+      agregarItem(contCIE, `${item.titulo} (${item.codigo})`);
       listaCIE.innerHTML = "";
       inputCIE.value = "";
     };
@@ -160,7 +163,7 @@ inputCIE.addEventListener("input", async function() {
   });
 });
 
-// ================= SIGNOS =================
+/* ===== SIGNOS ===== */
 const signos = [
   "Sibilancias",
   "Crépitantes",
@@ -184,22 +187,20 @@ inputSignos.addEventListener("input", function() {
   listaSignos.innerHTML = "";
   if (!q) return;
 
-  signos
-    .filter(s => normalizar(s).includes(q))
-    .forEach(s => {
-      const d = document.createElement("div");
-      d.className = "item-resultado";
-      d.textContent = s;
-      d.onclick = () => {
-        agregarItem(contSignos, s);
-        listaSignos.innerHTML = "";
-        inputSignos.value = "";
-      };
-      listaSignos.appendChild(d);
-    });
+  signos.filter(s => normalizar(s).includes(q)).forEach(s => {
+    const d = document.createElement("div");
+    d.className = "item-resultado";
+    d.textContent = s;
+    d.onclick = () => {
+      agregarItem(contSignos, s);
+      listaSignos.innerHTML = "";
+      inputSignos.value = "";
+    };
+    listaSignos.appendChild(d);
+  });
 });
 
-// ================= AGREGAR =================
+/* ===== AGREGAR ITEM ===== */
 function agregarItem(contenedor, texto) {
   const label = document.createElement("label");
   label.className = "sintoma-card seleccionado";
@@ -217,6 +218,38 @@ function agregarItem(contenedor, texto) {
   };
 
   contenedor.appendChild(label);
+}
+
+/* ===== RESUMEN ===== */
+function generarResumen() {
+  const nombre = document.getElementById("nombre").value;
+  const edad = document.getElementById("edad").value;
+  const sexo = document.getElementById("sexo").value;
+
+  const sintomas = [...document.querySelectorAll("#resultadosCIE .seleccionado")]
+    .map(e => e.textContent.trim());
+
+  const signosSel = [...document.querySelectorAll("#resultadosSignos .seleccionado")]
+    .map(e => e.textContent.trim());
+
+  let texto = "";
+  texto += `Paciente ${nombre || "NN"}, ${edad || "N/E"} años, sexo ${sexo || "N/E"}.\n\n`;
+
+  if (sintomas.length) {
+    texto += "Síntomas referidos:\n";
+    sintomas.forEach(s => texto += `- ${s}\n`);
+    texto += "\n";
+  }
+
+  if (signosSel.length) {
+    texto += "Signos clínicos:\n";
+    signosSel.forEach(s => texto += `- ${s}\n`);
+    texto += "\n";
+  }
+
+  texto += "Evaluación clínica orientada a patología respiratoria. Correlacionar con examen físico completo y estudios complementarios según criterio médico.";
+
+  document.getElementById("resumenClinico").value = texto;
 }
 </script>
 
